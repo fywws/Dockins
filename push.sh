@@ -1,1 +1,0 @@
-git add . ; git commit --allow-empty --allow-empty-message ; git push
