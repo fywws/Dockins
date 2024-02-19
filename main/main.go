@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
-
+import (
+	"fmt"
+	"os"
+	"strings"
+)
 func main() {
-	fmt.Println("Hello World!")
+	args := os.Args 
+	lastArgumentIndex := len(args)-1 
+	wordToSay := strings.TrimSpace(args[lastArgumentIndex])
+	fmt.Println("Hello "+wordToSay+"!") 
 }
