@@ -8,25 +8,17 @@ import (
 )
 
 func main() {
-	var rootCmd = &cobra.Command{Use: "app"}
+	var rootCmd = &cobra.Command{Use: "dockn"}
 
-	var privetCmd = &cobra.Command{
-		Use:   "privet",
-		Short: "Say hello",
+	var initCmd = &cobra.Command{
+		Use:   "init",
+		Short: "Initialize Dockerfile",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("Привет!")
+			os.Create("Dockerfile")
 		},
 	}
 
-	var pokaCmd = &cobra.Command{
-		Use:   "poka",
-		Short: "Say goodbye",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("Пока!")
-		},
-	}
-
-	rootCmd.AddCommand(privetCmd, pokaCmd)
+	rootCmd.AddCommand(initCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
