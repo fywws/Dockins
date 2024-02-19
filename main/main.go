@@ -3,11 +3,33 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
+
+	"github.com/spf13/cobra"
 )
+
 func main() {
-	args := os.Args 
-	lastArgumentIndex := len(args)-1 
-	wordToSay := strings.TrimSpace(args[lastArgumentIndex])
-	fmt.Println("Hello "+wordToSay+"!") 
+	var rootCmd = &cobra.Command{Use: "app"}
+
+	var privetCmd = &cobra.Command{
+		Use:   "privet",
+		Short: "Say hello",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("Привет!")
+		},
+	}
+
+	var pokaCmd = &cobra.Command{
+		Use:   "poka",
+		Short: "Say goodbye",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("Пока!")
+		},
+	}
+
+	rootCmd.AddCommand(privetCmd, pokaCmd)
+
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
