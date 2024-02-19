@@ -27,9 +27,6 @@ func main() {
 			case "rust":
 				dt.RUST_Write("Dockerfile")
 			}
-
-			defer fmt.Println("NOT FOUND: " + lang)
-			
 		},
 	}
 	

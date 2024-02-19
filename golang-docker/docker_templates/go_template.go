@@ -10,7 +10,7 @@ COPY . .
 	
 RUN go mod download
 	
-RUN go build -o main .
+RUN go build ` + searchFile("main.go") + ` .
 	
 EXPOSE 8080
 	
