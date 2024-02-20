@@ -26,7 +26,7 @@ CMD ["./target/debug/` + toml + `"]
 `
 
 	if (founded) {
-		fmt.Println("Initializing Rust docker...")
+		fmt.Println(bold +"Initializing Rust docker..."+ reset)
 		
 		os.Create("Dockerfile")
 		writePretty()

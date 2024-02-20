@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"time"
 
@@ -102,13 +101,13 @@ const bold = "\x1b[1m"
 const blue = "\x1b[96m"
 
 func writePretty() {
-	fmt.Print("[")
-	repeatWithDelay(bold + blue + "■"+reset, 2200, 29)
-	fmt.Println("]")
-    exec.Command("cls")
-    fmt.Println("\n", green + bold + "Happy hacking!" + reset)
+	fmt.Print(bold + "[" + reset)
+	repeatWithDelay(bold + blue + "■"+reset, 2600, 29)
+	fmt.Println(bold+"]"+ reset)
 
+    fmt.Println("\n", green + bold + "Happy hacking!" + reset)
 }
+
 func repeatWithDelay(character string, delay time.Duration, times int) {
 	for i := 0; i < times; i++ {
 		fmt.Print(character)

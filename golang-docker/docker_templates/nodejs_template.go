@@ -37,14 +37,14 @@ CMD ["yarn", "start"]`
 
 	if fileExist("yarn.lock") && !fileExist("package.json") {
 		fileFounded = true
-		fmt.Println("Initializing Node-JS yarn docker...")
+		fmt.Println(bold +"Initializing Node-JS yarn docker..."+ reset)
 		os.Create("Dockerfile")
 		writePretty()
 		writeFile("Dockerfile", node_standard_yarn)
 		
 	} else if fileExist("package.json") && !fileExist("yarn.lock") {
 		fileFounded = true
-		fmt.Println("Initializing Node-JS npm docker...")
+		fmt.Println(bold +"Initializing Node-JS npm docker..."+ reset)
 		os.Create("Dockerfile")
 		writePretty()
 		writeFile("Dockerfile", node_standard_npm)

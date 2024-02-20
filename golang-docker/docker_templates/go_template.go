@@ -24,7 +24,7 @@ EXPOSE 8080:8080
 CMD ["`+strings.ReplaceAll(file, "main.go", "main")+`"]`
 	
 	if (file != ""){
-		fmt.Println("Initializing Go docker...")
+		fmt.Println(bold + "Initializing Go docker..." + reset )
 		os.Create("Dockerfile")
 		writePretty()
 		
