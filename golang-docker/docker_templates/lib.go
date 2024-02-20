@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/BurntSushi/toml"
 )
@@ -18,19 +19,29 @@ func deleteFile(file string) {
 }
 
 func CREATE_SH(name string) {
-	rust_bat_string := `IMAGE_NAME="` + name + `"
-IMAGE_TAG="latest"
-	
-docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .`
+	rust_bat_string := `param(
+    [Parameter(Mandatory=$true)]
+    [String]$ImageName,
 
-	writeFile(name+".sh", rust_bat_string)
+    [Parameter()]
+    [String]$DockerfilePath
+)
+
+if (-not $DockerfilePath) {
+    $DockerfilePath = "."
+}
+
+Write-Host "Building Docker image '$ImageName'..."
+docker build -f "$DockerfilePath/Dockerfile" -t "$ImageName" .`
+
+	writeFile(name+".ps1", rust_bat_string)
 
 }
 
 func findTomlName() string {
     file, err := os.Open("Cargo.toml")
     if err != nil {
-        fmt.Println("File not found:", err)
+        fmt.Println( red + bold + " → File not found : Cargo.toml" + reset)
     }
     defer file.Close()
 
@@ -67,4 +78,21 @@ func searchFile(targetFile string) string {
     }
 
     return resultPath
+}
+
+const reset = "\033[0m"
+const colorRed = "\033[45m"
+const red = "\x1b[31m"
+const bold = "\x1b[1m"
+
+func writePretty() {
+	fmt.Print("[")
+	repeatWithDelay(colorRed+"■"+reset, 2200, 29)
+	fmt.Println("]")
+}
+func repeatWithDelay(character string, delay time.Duration, times int) {
+	for i := 0; i < times; i++ {
+		fmt.Print(character)
+		time.Sleep(delay)
+	}
 }
