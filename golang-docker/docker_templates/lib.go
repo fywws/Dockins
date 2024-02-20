@@ -2,10 +2,14 @@ package docker_templates
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 	"time"
+	"unicode"
 
 	"github.com/BurntSushi/toml"
 )
@@ -18,7 +22,7 @@ func deleteFile(file string) {
     os.Remove(file)
 }
 
-func CREATE_SH(name string) {
+func CREATE_SH(name string, port string) {
 	rust_bat_string := `param(
     [Parameter(Mandatory=$true)]
     [String]$ImageName,
@@ -35,7 +39,7 @@ Write-Host "Building Docker image '$ImageName'..."
 docker build -f "$DockerfilePath/Dockerfile" -t "$ImageName" .
 
 Write-Host "Starting Docker container '$ImageName'..."
-docker run --name appContainer -p 3000:3000 -it $ImageName`
+docker run --name appContainer -p `+string(port)+`:`+string(port)+` -it $ImageName`
 
 	writeFile(name+".ps1", rust_bat_string)
 
@@ -113,4 +117,78 @@ func repeatWithDelay(character string, delay time.Duration, times int) {
 		fmt.Print(character)
 		time.Sleep(delay)
 	}
+}
+
+func StringInFile(filename string, searchStr string) bool {
+	data, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return false
+	}
+
+	return strings.Contains(string(data), searchStr)
+}
+
+func findAppWithFastAPI(code string) bool {
+	pattern := regexp.MustCompile(`([A-Za-z_][A-Za-z0-9_]*)\s*=\s*FastAPI\(`)
+	matches := pattern.FindAllStringSubmatch(code, -1)
+
+	for _, match := range matches {
+		if strings.ToLower(match[1]) == "app" {
+			return true
+		}
+	}
+
+	return false
+}
+
+func extractVariableNameFromLine(line string) string {
+	parts := strings.SplitN(line, "=", 2)
+	if len(parts) != 2 {
+		return ""
+	}
+
+	assignmentParts := strings.FieldsFunc(parts[0], func(r rune) bool { return !unicode.IsLetter(r) })
+	if len(assignmentParts) <= 1 || assignmentParts[len(assignmentParts)-1] != "FastAPI()" {
+		return ""
+	}
+
+	return assignmentParts[0]
+}
+
+
+func GetAppName(code string) (name string, ok bool) {
+    // Split the code into individual lines
+    lines := strings.Split(code, "\n")
+    
+    // Iterate through all lines
+    for _, line := range lines {
+        
+        // Trim leading and trailing spaces
+        trimmedLine := strings.TrimSpace(line)
+            
+            // Check if the line matches the pattern
+            if strings.Contains(trimmedLine, "= FastAPI()") {
+                // Extract the name
+                nameParts := strings.SplitN(trimmedLine, "=", 2)
+                
+                // Remove extra spaces from the extracted name
+                return strings.TrimSpace(nameParts[0]), true
+            }
+    }
+    // Return empty name and false flag if no match found
+    return "", false
+}
+
+func GetAppNameFromFile(filename string) (name string, ok bool) {
+    // Read the entire content of the file
+    contentBytes, err := os.ReadFile(filename)
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    // Convert the bytes to a string representation
+    contentString := string(contentBytes)
+    
+    // Call the existing GetAppName function with the string content
+    return GetAppName(contentString)
 }

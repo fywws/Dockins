@@ -3,9 +3,11 @@ package docker_templates
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
-func RUST_Write(makeS bool) {
+func RUST_Write(makeS bool, port int) {
+	portString := strconv.Itoa(port)
 	var founded bool = false;
 	toml := findTomlName()
 	if toml != "" {
@@ -20,7 +22,7 @@ COPY . .
 RUN cargo install --path .
 RUN cargo build --release
 
-EXPOSE 8080:8080
+EXPOSE `+portString+`:`+portString+`
 
 CMD ["./target/debug/` + toml + `"]
 `
@@ -33,7 +35,7 @@ CMD ["./target/debug/` + toml + `"]
 		
 		writeFile("Dockerfile", rust_standard)
 		if !makeS {
-			CREATE_SH("rust-template")
+			CREATE_SH("rust-template", portString)
 		}
 	} 
 }

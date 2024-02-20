@@ -3,9 +3,12 @@ package docker_templates
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
-func NODEJS_Write(makeS bool) {
+func NODEJS_Write(makeS bool, port int) {
+	portString := strconv.Itoa(port)
+
 	var node_standard_npm string = `FROM node:latest
 
 WORKDIR /app
@@ -14,7 +17,7 @@ COPY . /app
 	
 RUN npm install
 	
-EXPOSE 3000:3000
+EXPOSE `+portString+`:`+portString+`
 	
 CMD ["npm", "start"]`
 
@@ -27,7 +30,7 @@ COPY . /app
 RUN npm install --global yarn
 RUN yarn install --production
 
-EXPOSE 3000:3000
+EXPOSE `+portString+`:`+portString+`
 		
 CMD ["yarn", "start"]`
 
@@ -53,6 +56,6 @@ CMD ["yarn", "start"]`
 	}
 
 	if !makeS && fileFounded {
-		CREATE_SH("nodejs-template")
+		CREATE_SH("nodejs-template", portString)
 	}
 }
