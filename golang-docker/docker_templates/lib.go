@@ -97,13 +97,16 @@ func searchFile(targetFile string) string {
 
 const reset = "\033[0m"
 const red = "\x1b[31m"
+const green = "\x1b[32m"
 const bold = "\x1b[1m"
+const blue = "\x1b[96m"
 
 func writePretty() {
 	fmt.Print("[")
-	repeatWithDelay("■"+reset, 2200, 29)
+	repeatWithDelay(bold + blue + "■"+reset, 2200, 29)
 	fmt.Println("]")
     exec.Command("cls")
+    fmt.Println("\n", green + bold + "Happy hacking!" + reset)
 
 }
 func repeatWithDelay(character string, delay time.Duration, times int) {
