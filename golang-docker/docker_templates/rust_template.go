@@ -18,7 +18,7 @@ WORKDIR /app
 COPY . .
 	
 RUN cargo install --path .
-RUN cargo build
+RUN cargo build --release
 
 EXPOSE 8080:8080
 

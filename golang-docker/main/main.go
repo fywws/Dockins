@@ -24,7 +24,7 @@ func main() {
 	var initCmd = &cobra.Command{
 		Use:   "init",
 		Short: "Initialize Dockerfile",
-		Args:  cobra.ExactValidArgs(1),
+		Args: cobra.ExactValidArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			arg := args[0]
 			noScript := cmd.Flag("no-script").Changed
