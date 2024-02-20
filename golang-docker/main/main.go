@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 	dt "main/docker_templates"
+	list "main/libs/list"
 	"os"
 	"strconv"
 
@@ -20,6 +21,15 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
             fmt.Println( "\x1b[32m" + "\x1b[1m" + "PONG" + colorReset)
         },
+	}
+
+	var generateCmd = &cobra.Command{
+		Use: "gen",
+		Short: "Generating Dockerfile",
+		Long: "Generating Dockerfile, Graphical",
+		Run: func (cmd *cobra.Command, args []string){
+			list.InitList()
+		},
 	}
 
 	var initCmd = &cobra.Command{
@@ -61,13 +71,13 @@ func main() {
 			case "go":
 				dt.GO_Write(noScript, port, db)
 			case "rust":
-				dt.RUST_Write(noScript, port)
+				dt.RUST_Write(noScript, port, db)
 			case "node":
-				dt.NODEJS_Write(noScript, port)	
+				dt.NODEJS_Write(noScript, port, db)	
 			case "cpp":
-				dt.CPP_Write(noScript, port)
+				dt.CPP_Write(noScript, port, db)
 			case "py":
-				dt.PY_Write(noScript, port)	
+				dt.PY_Write(noScript, port, dbStr)	
 			default:
 				fmt.Println( "\x1b[31m"+ "\x1b[1m" + " × ERROR : incorrect language provided" + colorReset)
 				os.Remove("Dockerfile")
@@ -79,13 +89,11 @@ func main() {
 	initCmd.Flags().Bool("no-script", true, "No script creating with |init| command")
 	initCmd.Flags().String("port", "3000", "Specify port for Docker to run")
 	initCmd.Flags().String("db", "", "Specify port for Docker to run")
-
-
-
+	
 	
 
 	
-	rootCmd.AddCommand(initCmd, pingCmd)
+	rootCmd.AddCommand(initCmd, pingCmd, generateCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

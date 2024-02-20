@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func CPP_Write(makeS bool, port int) {
+func CPP_Write(makeS bool, port int, db string) {
 	portString := strconv.Itoa(port)
 
 	var filename string = searchFile("main.cpp")

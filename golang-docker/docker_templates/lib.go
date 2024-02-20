@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	lib "main/libs/progress"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/BurntSushi/toml"
 )
+
 
 func writeFile(file, data string) {
 	os.WriteFile(file, []byte(data), 0644)
@@ -105,11 +107,13 @@ const bold = "\x1b[1m"
 const blue = "\x1b[96m"
 
 func writePretty() {
-	fmt.Print(bold + "[" + reset)
-	repeatWithDelay(bold + blue + "■"+reset, 2600, 29)
-	fmt.Println(bold+"]"+ reset)
+	// fmt.Print(bold + "[" + reset)
+	// repeatWithDelay(bold + blue + "■"+reset, 2600, 29)
+	// fmt.Println(bold+"]"+ reset)
 
-    fmt.Println("\n", green + bold + "Happy hacking!" + reset)
+    lib.ProgressAnimated()
+
+    fmt.Println("\n", green + bold + "Happy hacking" + reset)
 }
 
 func repeatWithDelay(character string, delay time.Duration, times int) {
@@ -157,38 +161,26 @@ func extractVariableNameFromLine(line string) string {
 
 
 func GetAppName(code string) (name string, ok bool) {
-    // Split the code into individual lines
     lines := strings.Split(code, "\n")
     
-    // Iterate through all lines
     for _, line := range lines {
         
-        // Trim leading and trailing spaces
         trimmedLine := strings.TrimSpace(line)
-            
-            // Check if the line matches the pattern
             if strings.Contains(trimmedLine, "= FastAPI()") {
-                // Extract the name
                 nameParts := strings.SplitN(trimmedLine, "=", 2)
-                
-                // Remove extra spaces from the extracted name
                 return strings.TrimSpace(nameParts[0]), true
             }
     }
-    // Return empty name and false flag if no match found
     return "", false
 }
 
 func GetAppNameFromFile(filename string) (name string, ok bool) {
-    // Read the entire content of the file
     contentBytes, err := os.ReadFile(filename)
     if err != nil {
         log.Fatal(err)
     }
     
-    // Convert the bytes to a string representation
     contentString := string(contentBytes)
     
-    // Call the existing GetAppName function with the string content
     return GetAppName(contentString)
 }
