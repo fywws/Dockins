@@ -1,8 +1,7 @@
 package docker_templates
 
 func RUST_Write(file string) {
-
-	var go_standard string = `FROM rust:latest
+	var go_standard string = `FROM rust:latest	
 
 WORKDIR /app
 	
