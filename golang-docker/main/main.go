@@ -1,5 +1,6 @@
 package main
 
+// go build -trimpath -o dockn.exe -ldflags "-X main.version=1.0.0 -X main.buildDate=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" .\main\main.go
 import (
 	"fmt"
 	dt "main/docker_templates"
@@ -16,7 +17,7 @@ func main() {
 	var pingCmd = &cobra.Command{
 		Use: "ping",
 		Run: func(cmd *cobra.Command, args []string) {
-            fmt.Println( "\x1b[32m" + "PONG" + colorReset)
+            fmt.Println( "\x1b[32m" + "\x1b[1m" + "PONG" + colorReset)
         },
 	}
 
@@ -36,7 +37,7 @@ func main() {
 			case "node":
 				dt.NODEJS_Write(noScript)	
 			default:
-				fmt.Println( "\x1b[31m"+ "\x1b[1m" + " → ERROR : incorrect language provided" + colorReset)
+				fmt.Println( "\x1b[31m"+ "\x1b[1m" + " × ERROR : incorrect language provided" + colorReset)
 				os.Remove("Dockerfile")
 			}
 
@@ -50,21 +51,9 @@ func main() {
 
 
 	
-	var helpCmd = &cobra.Command{
-		Use:   "help",
-        Short: "Show help",
-		Long: "Show information of all commands and arguments",
-        Args:  cobra.ExactValidArgs(0),
-        Run: func(cmd *cobra.Command, args []string) {
-            fmt.Println(`List of |init| arguments : 
-	-> go - GoLang
-	-> java - Java
-	-> rust - Rust 
-	-> nodejs - Yarn and npm node-js projects`)
-        },
-	}
+
 	
-	rootCmd.AddCommand(initCmd, helpCmd, pingCmd)
+	rootCmd.AddCommand(initCmd, pingCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

@@ -14,7 +14,7 @@ COPY . /app
 	
 RUN npm install
 	
-EXPOSE 3000
+EXPOSE 3000:3000
 	
 CMD ["npm", "start"]`
 
@@ -25,32 +25,31 @@ WORKDIR /app
 COPY . /app
 		
 RUN npm install --global yarn
-
 RUN yarn install --production
 
-EXPOSE 3000
+EXPOSE 3000:3000
 		
 CMD ["yarn", "start"]`
 
+// docker run --name appContainer -p 3000:3000 -it <imageID>
+
 	fileFounded := false
 
-	if searchFile("yarn.lock") != "" {
+	if fileExist("yarn.lock") && !fileExist("package.json") {
 		fileFounded = true
-		fmt.Println("Initializing Node-JS docker...")
+		fmt.Println("Initializing Node-JS yarn docker...")
 		os.Create("Dockerfile")
 		writePretty()
 		writeFile("Dockerfile", node_standard_yarn)
 		
-	}
-	if searchFile("package.json") != "" {
+	} else if fileExist("package.json") && !fileExist("yarn.lock") {
 		fileFounded = true
-		fmt.Println("Initializing Node-JS docker...")
+		fmt.Println("Initializing Node-JS npm docker...")
 		os.Create("Dockerfile")
 		writePretty()
 		writeFile("Dockerfile", node_standard_npm)
-	}
-	if !fileFounded {
-		fmt.Println(red + bold + " → No node-js files are found in the directory" + reset)
+	} else if !fileFounded {
+		fmt.Println(red + bold + " × No node-js files are found in the directory" + reset)
 	}
 
 	if !makeS && fileFounded {

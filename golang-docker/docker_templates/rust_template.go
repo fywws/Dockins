@@ -17,8 +17,10 @@ WORKDIR /app
 	
 COPY . .
 	
-RUN cargo install .
+RUN cargo install --path .
 RUN cargo build
+
+EXPOSE 8080:8080
 
 CMD ["./target/debug/` + toml + `"]
 `

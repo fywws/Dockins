@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"time"
 
@@ -32,7 +33,10 @@ if (-not $DockerfilePath) {
 }
 
 Write-Host "Building Docker image '$ImageName'..."
-docker build -f "$DockerfilePath/Dockerfile" -t "$ImageName" .`
+docker build -f "$DockerfilePath/Dockerfile" -t "$ImageName" .
+
+Write-Host "Starting Docker container '$ImageName'..."
+docker run --name appContainer -p 3000:3000 -it $ImageName`
 
 	writeFile(name+".ps1", rust_bat_string)
 
@@ -41,7 +45,7 @@ docker build -f "$DockerfilePath/Dockerfile" -t "$ImageName" .`
 func findTomlName() string {
     file, err := os.Open("Cargo.toml")
     if err != nil {
-        fmt.Println( red + bold + " → File not found : Cargo.toml" + reset)
+        fmt.Println( red + bold + " × File not found : Cargo.toml" + reset)
     }
     defer file.Close()
 
@@ -59,6 +63,14 @@ func findTomlName() string {
     return name
 }
 
+func fileExist(fileName string) bool {
+	_, err := os.Stat(fileName)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
 func searchFile(targetFile string) string {
     var resultPath string
 
@@ -68,6 +80,7 @@ func searchFile(targetFile string) string {
         }
         if !info.IsDir() && info.Name() == targetFile {
             resultPath, _ = filepath.Rel(".", path)
+            resultPath = filepath.ToSlash(resultPath) // Преобразование пути
             return fmt.Errorf("file found")
         }
         return nil
@@ -80,15 +93,18 @@ func searchFile(targetFile string) string {
     return resultPath
 }
 
+
+
 const reset = "\033[0m"
-const colorRed = "\033[45m"
 const red = "\x1b[31m"
 const bold = "\x1b[1m"
 
 func writePretty() {
 	fmt.Print("[")
-	repeatWithDelay(colorRed+"■"+reset, 2200, 29)
+	repeatWithDelay("■"+reset, 2200, 29)
 	fmt.Println("]")
+    exec.Command("cls")
+
 }
 func repeatWithDelay(character string, delay time.Duration, times int) {
 	for i := 0; i < times; i++ {
