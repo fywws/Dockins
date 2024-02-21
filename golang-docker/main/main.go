@@ -37,6 +37,7 @@ func main() {
 					makeSbool = true
 				default:
 					fmt.Println( "\x1b[31m"+ "\x1b[1m" + " × ERROR : No choise provided" + colorReset)
+					os.Exit(0)
             }			
 	
 			input := input.InitInput("PORT", "Choose port to app must connect")
@@ -51,6 +52,8 @@ func main() {
 			port, err := strconv.Atoi(input)	
 			if err != nil {
                 fmt.Println( "\x1b[31m" + "\x1b[1m" + "× ERROR: incorrect port provided" + colorReset)
+				os.Exit(0)
+
 			}
 
 			switch choice {
