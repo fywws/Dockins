@@ -5,7 +5,10 @@ import (
 	"fmt"
 	dt "main/docker_templates"
 	input "main/libs/input"
+	inputs "main/libs/inputs"
 	list "main/libs/list"
+	table "main/libs/table"
+
 	"os"
 	"strconv"
 
@@ -17,20 +20,12 @@ const colorReset = "\033[0m"
 func main() {
 	var rootCmd = &cobra.Command{Use: "dockn"}
 
-	var pingCmd = &cobra.Command{
-		Use: "ping",
-		Run: func(cmd *cobra.Command, args []string) {
-            fmt.Println( "\x1b[32m" + "\x1b[1m" + "PONG" + colorReset)
-        },
-	}
-
-	var generateCmd = &cobra.Command{
+	var initCmd = &cobra.Command{
 		Use: "generate",
 		Short: "Generating Dockerfile",
 		Long: "Generating Dockerfile graphically",
 		Run: func (cmd *cobra.Command, args []string){
 			choice := list.InitList("Pick language", []string{"python","go", "rust", "nodejs"})
-
 
 			makeScript := list.InitList("Do you want to create a lauch script?", []string{"Yes", "No"})
 			var makeSbool bool;
@@ -53,7 +48,7 @@ func main() {
 				db=""
 			}
 
-			port, err := strconv.Atoi(input)
+			port, err := strconv.Atoi(input)	
 			if err != nil {
                 fmt.Println( "\x1b[31m" + "\x1b[1m" + "× ERROR: incorrect port provided" + colorReset)
 			}
@@ -70,73 +65,35 @@ func main() {
 			}
 				
 		},
+	}	
+
+	var imagesCmd = &cobra.Command{
+		Use:   "images",
+        Short: "List Docker images",
+        Long:  "List Docker images",
+        Args:  cobra.ExactValidArgs(0),
+        Run: func(cmd *cobra.Command, args []string) {
+            table.ListImages()
+        },
 	}
 
-	var initCmd = &cobra.Command{
-		Use:   "init",
-		Short: "Initialize Dockerfile [ DEPERECATED: use generate instead ]",
-		Long: "Initialize Dockerfile with options [ DEPERECATED: use generate instead ]",
-		Args: cobra.ExactValidArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			arg := args[0]
-			noScript := cmd.Flag("no-script").Changed
-			portStr := cmd.Flag("port").Value.String()
-			dbStr := cmd.Flag("db").Value.String()
-
-			port, err := strconv.Atoi(portStr)
-            if err != nil {
-                fmt.Println( "\x1b[31m" + "\x1b[1m" + "× ERROR: incorrect port provided" + colorReset)
-                return
-            }
-
-			var db string;
-
-			switch dbStr {
-			case "":
-				break
-
-			case "postgres":
-				db = "postgres"
-			case "mysql":
-				db = "mysql"
-			case "sqlite":
-				db = "sqlite"
-
-			default:
-				fmt.Println( "\x1b[31m" + "\x1b[1m" + " × ERROR: provided database not found" + colorReset)
-                return
-			}
-
-
-			switch arg {
-			case "go":
-				dt.GO_Write(noScript, port, db)
-			case "rust":
-				dt.RUST_Write(noScript, port, db)
-			case "node":
-				dt.NODEJS_Write(noScript, port, db)	
-			case "cpp":
-				dt.CPP_Write(noScript, port, db)
-			case "py":
-				dt.PY_Write(noScript, port, dbStr)	
-			default:
-				fmt.Println( "\x1b[31m"+ "\x1b[1m" + " × ERROR : incorrect language provided" + colorReset)
-				os.Remove("Dockerfile")
-			}
-
-		},
+	var inputsCmd = &cobra.Command{
+		Use:   "inputs",
+        Short: "List Docker inputs",
+        Long:  "List Docker inputs",
+        Args:  cobra.ExactValidArgs(0),
+        Run: func(cmd *cobra.Command, args []string) {
+            inputs.InitInputs()
+        },
 	}
 	
 	initCmd.Flags().Bool("no-script", true, "No script creating with |init| command")
 	initCmd.Flags().String("port", "3000", "Specify port for Docker to run")
 	initCmd.Flags().String("db", "", "Specify port for Docker to run")
 	
-	generateCmd.Flags().Bool("no-script", true, "No script creating with |init| command")
-	generateCmd.Flags().String("port", "3000", "Specify port for Docker to run")
-	generateCmd.Flags().String("db", "", "Specify port for Docker to run")
 
 	
-	rootCmd.AddCommand(initCmd, pingCmd, generateCmd)
+	rootCmd.AddCommand(initCmd, imagesCmd, inputsCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

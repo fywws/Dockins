@@ -92,7 +92,7 @@ var choice string;
 func (m model) View() string {
 	if m.choice != "" {
 		choice = m.choice
-		return quitTextStyle.Render(fmt.Sprintf("Initializing %s project", m.choice))
+		return "ok"
 	}
 	if m.quitting {
 		return quitTextStyle.Render("Ok.")
