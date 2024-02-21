@@ -1,14 +1,5 @@
+ **/Makefile
 *.exe
 .idea
-<<<<<<< HEAD
 .vs
-*.make
-**/Makefile
-*.mk
-*Makefile
-**Makefile
-/Makefile
-*/Makefile
-=======
-.vs
->>>>>>> parent of 45cb839 (no make project)
+
