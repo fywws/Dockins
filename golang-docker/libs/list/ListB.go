@@ -16,7 +16,7 @@ const listHeight = 14
 var (
 	titleStyle        = lipgloss.NewStyle().MarginLeft(2)
 	itemStyle         = lipgloss.NewStyle().PaddingLeft(4)
-	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("170"))
+	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("#6673e1"))
 	paginationStyle   = list.DefaultStyles().PaginationStyle.PaddingLeft(4)
 	helpStyle         = list.DefaultStyles().HelpStyle.PaddingLeft(4).PaddingBottom(1)
 	quitTextStyle     = lipgloss.NewStyle().Margin(1, 0, 2, 4)
@@ -69,6 +69,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch keypress := msg.String(); keypress {
 		case "q", "ctrl+c":
 			m.quitting = true
+			fmt.Printf("\x1b[2J")
+			os.Exit(0)
 			return m, tea.Quit
 
 		case "enter":
@@ -85,8 +87,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
+var choice string;
+
 func (m model) View() string {
 	if m.choice != "" {
+		choice = m.choice
 		return quitTextStyle.Render(fmt.Sprintf("Initializing %s project", m.choice))
 	}
 	if m.quitting {
@@ -95,24 +100,17 @@ func (m model) View() string {
 	return "\n" + m.list.View()
 }
 
-func InitList() {
-	items := []list.Item{
-		item("Ramen"),
-		item("Tomato Soup"),
-		item("Hamburgers"),
-		item("Cheeseburgers"),
-		item("Currywurst"),
-		item("Okonomiyaki"),
-		item("Pasta"),
-		item("Fillet Mignon"),
-		item("Caviar"),
-		item("Just Wine"),
-	}
+func InitList(title string, items []string) string {
+
+	var listItems []list.Item
+    for _, s := range items {
+       listItems = append(listItems, item(s))
+    }
 
 	const defaultWidth = 20
 
-	l := list.New(items, itemDelegate{}, defaultWidth, listHeight)
-	l.Title = "What do you want for dinner?"
+	l := list.New(listItems, itemDelegate{}, defaultWidth, listHeight)
+	l.Title = title
 	l.SetShowStatusBar(false)
 	l.SetFilteringEnabled(false)
 	l.Styles.Title = titleStyle
@@ -125,4 +123,6 @@ func InitList() {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
+
+	return choice
 }

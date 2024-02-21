@@ -19,18 +19,14 @@ func RUST_Write(makeS bool, port int, db string) {
 	if toml != "" {
 		founded = true
 	}
-	var rust_standard string = `FROM rust:latest	
+	var rust_standard string = `FROM rust:latest
+COPY ./ ./
 
-WORKDIR /app
-	
-COPY . .
-	
-RUN cargo install --path .
 RUN cargo build --release
 
 EXPOSE `+portString+`:`+portString+`
 
-CMD ["./target/debug/` + toml + `"]
+CMD ["./target/release/`+toml+`"]
 `
 
 

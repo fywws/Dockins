@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 	dt "main/docker_templates"
+	input "main/libs/input"
 	list "main/libs/list"
 	"os"
 	"strconv"
@@ -24,18 +25,57 @@ func main() {
 	}
 
 	var generateCmd = &cobra.Command{
-		Use: "gen",
+		Use: "generate",
 		Short: "Generating Dockerfile",
-		Long: "Generating Dockerfile, Graphical",
+		Long: "Generating Dockerfile graphically",
 		Run: func (cmd *cobra.Command, args []string){
-			list.InitList()
+			choice := list.InitList("Pick language", []string{"python","go", "rust", "nodejs"})
+
+
+			makeScript := list.InitList("Do you want to create a lauch script?", []string{"Yes", "No"})
+			var makeSbool bool;
+			
+			switch makeScript {
+				case"Yes":
+					makeSbool = false
+				case"No":
+					makeSbool = true
+				default:
+					fmt.Println( "\x1b[31m"+ "\x1b[1m" + " × ERROR : No choise provided" + colorReset)
+            }			
+	
+			input := input.InitInput("PORT", "Choose port to app must connect")
+
+
+			db := list.InitList("Choose database", []string{"none", "postgres"})
+
+			if db == "none" {
+				db=""
+			}
+
+			port, err := strconv.Atoi(input)
+			if err != nil {
+                fmt.Println( "\x1b[31m" + "\x1b[1m" + "× ERROR: incorrect port provided" + colorReset)
+			}
+
+			switch choice {
+			case "python":
+				dt.PY_Write(makeSbool, port , db)
+			case "go":
+				dt.GO_Write(makeSbool, port , db)
+			case "rust":
+				dt.RUST_Write(makeSbool, port , db)	
+			case "nodejs":
+				dt.NODEJS_Write(makeSbool, port , db)	
+			}
+				
 		},
 	}
 
 	var initCmd = &cobra.Command{
 		Use:   "init",
-		Short: "Initialize Dockerfile",
-		Long: "Initialize Dockerfile with options",
+		Short: "Initialize Dockerfile [ DEPERECATED ]",
+		Long: "Initialize Dockerfile with options [ DEPERECATED ]",
 		Args: cobra.ExactValidArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			arg := args[0]
@@ -91,7 +131,9 @@ func main() {
 	initCmd.Flags().String("port", "3000", "Specify port for Docker to run")
 	initCmd.Flags().String("db", "", "Specify port for Docker to run")
 	
-	
+	generateCmd.Flags().Bool("no-script", true, "No script creating with |init| command")
+	generateCmd.Flags().String("port", "3000", "Specify port for Docker to run")
+	generateCmd.Flags().String("db", "", "Specify port for Docker to run")
 
 	
 	rootCmd.AddCommand(initCmd, pingCmd, generateCmd)
