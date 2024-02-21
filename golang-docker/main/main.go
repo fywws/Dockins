@@ -21,7 +21,7 @@ func main() {
 	var rootCmd = &cobra.Command{Use: "dockn"}
 
 	var initCmd = &cobra.Command{
-		Use: "generate",
+		Use: "init",
 		Short: "Generating Dockerfile",
 		Long: "Generating Dockerfile graphically",
 		Run: func (cmd *cobra.Command, args []string){
