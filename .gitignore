@@ -16,3 +16,4 @@ _deps
 .target
 /target
 target
+./rust-yml/Dockins-yml/target/*
