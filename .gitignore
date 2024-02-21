@@ -3,3 +3,4 @@
 .vs
 ./rust-yml/Dockins-yml/target/*
 *.yml
+rust-yml/Dockins-yml/target/
