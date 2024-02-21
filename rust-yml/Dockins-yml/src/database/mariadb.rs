@@ -1,9 +1,8 @@
-use docker_compose_types::{BuildStep, Environment, Service, Volumes};
+use docker_compose_types::{BuildStep, Service, Volumes};
 use crate::database::help_fns::db_info;
 
-pub fn postgresql(user_name: Option<String>, password: Option<String>, db_name: Option<String>) -> (String, Option<Service>) {
-    // ADD SUPPORT OF CONFIG
-    let build_steps = BuildStep::Simple("posgresql.Dockerfile".to_string());
+pub fn mariadb(user_name: Option<String>, password: Option<String>, db_name: Option<String>) -> (String, Option<Service>) {
+    let build_steps = BuildStep::Simple("mariadb.Dockerfile".to_string());
 
     let volume = Volumes::Simple("postgres_data:/var/lib/postgresql/data:/app".to_string());
 
@@ -18,5 +17,5 @@ pub fn postgresql(user_name: Option<String>, password: Option<String>, db_name: 
         ..Default::default()
     });
 
-    ("postgres-db".to_string(), service)
+    ("mariadb-db".to_string(), service)
 }
