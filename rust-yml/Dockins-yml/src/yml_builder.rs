@@ -101,18 +101,18 @@ fn db_params() -> (Option<String>, Option<String>, Option<String>) {
     let mut password = String::new();
     let mut dbname = String::new();
 
-    println!("Enter postgresql username:");
+    println!("Enter database username:");
     io::stdin().read_line(&mut username)
         .expect("Failed to read line");
 
     if username.trim().is_empty() {
         return (None, None, None)
     } else {
-        println!("Enter postgresql password:");
+        println!("Enter database password:");
         io::stdin().read_line(&mut password)
             .expect("Failed to read line");
 
-        println!("Enter postgresql database name:");
+        println!("Enter database database name:");
         io::stdin().read_line(&mut dbname)
             .expect("Failed to read line");
 
