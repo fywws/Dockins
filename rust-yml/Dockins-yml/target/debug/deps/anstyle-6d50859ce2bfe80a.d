@@ -1,0 +1,12 @@
+C:\github\Dockins\rust-yml\Dockins-yml\target\debug\deps\libanstyle-6d50859ce2bfe80a.rmeta: C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\lib.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\macros.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\color.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\effect.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\reset.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\style.rs
+
+C:\github\Dockins\rust-yml\Dockins-yml\target\debug\deps\libanstyle-6d50859ce2bfe80a.rlib: C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\lib.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\macros.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\color.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\effect.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\reset.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\style.rs
+
+C:\github\Dockins\rust-yml\Dockins-yml\target\debug\deps\anstyle-6d50859ce2bfe80a.d: C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\lib.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\macros.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\color.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\effect.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\reset.rs C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\style.rs
+
+C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\lib.rs:
+C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\macros.rs:
+C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\color.rs:
+C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\effect.rs:
+C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\reset.rs:
+C:\Users\lerne\.cargo\registry\src\index.crates.io-6f17d22bba15001f\anstyle-1.0.6\src\style.rs:
