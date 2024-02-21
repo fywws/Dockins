@@ -4,3 +4,7 @@
 *.make
 **/Makefile
 *.mk
+*Makefile
+**Makefile
+/Makefile
+*/Makefile
