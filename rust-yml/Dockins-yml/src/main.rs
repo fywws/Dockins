@@ -17,11 +17,11 @@ use crate::supported_services::{
     supported_web_server_services};
 use crate::yml_builder::builder;
 
-
 fn main() {
     let cli = Cli::parse();
 
     match cli.cmd {
+        Commands::About {} => {}
         Commands::Init { frontend, backend, server, database } => {
 
             builder(frontend, backend, server, database)
@@ -31,9 +31,5 @@ fn main() {
         Commands::BackendList => { supported_backend_services() }
         Commands::WebServerList => { supported_web_server_services() }
         Commands::DatabasesList => { supported_database_services() }
-
-        Commands::About {} => {}
     };
-    //Add support for users config
 }
-
