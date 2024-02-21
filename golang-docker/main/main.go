@@ -48,7 +48,7 @@ func main() {
 
 
 			db := list.InitList("Choose database", []string{"none", "postgres"})
-
+					
 			if db == "none" {
 				db=""
 			}
@@ -74,8 +74,8 @@ func main() {
 
 	var initCmd = &cobra.Command{
 		Use:   "init",
-		Short: "Initialize Dockerfile [ DEPERECATED ]",
-		Long: "Initialize Dockerfile with options [ DEPERECATED ]",
+		Short: "Initialize Dockerfile [ DEPERECATED: use generate instead ]",
+		Long: "Initialize Dockerfile with options [ DEPERECATED: use generate instead ]",
 		Args: cobra.ExactValidArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			arg := args[0]
