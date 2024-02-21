@@ -21,6 +21,12 @@ type model struct {
 
 func (m model) Init() tea.Cmd { return nil }
 
+const reset = "\033[0m"
+const red = "\x1b[31m"
+const green = "\x1b[32m"
+const bold = "\x1b[1m"
+const blue = "\x1b[96m"
+
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
@@ -33,9 +39,33 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.table.Focus()
 			}
 		case "q", "ctrl+c":
+			os.Exit(0)
+			tea.ClearScreen()
+			
 			return m, tea.Quit
 		case "delete":
+			selectedRow := m.table.SelectedRow()
+			if selectedRow == nil || len(selectedRow) ==   0 {
+				return m, nil
+			}
+
+			imageID := selectedRow[0]
+
+			deleteCmd := exec.Command("docker", "rmi","-f", imageID)
+			deleteCmd.Stderr = os.Stderr
+			err := deleteCmd.Run()
 			
+			// HERE 
+
+			if err != nil {
+			} else {
+			}
+
+			deleteCmd.Wait()
+
+			ListImages()
+			return m, tea.ClearScreen
+	
 		}
 	}
 	m.table, cmd = m.table.Update(msg)
@@ -53,6 +83,7 @@ func (m model) View() string {
 }
 
 func ListImages() {
+	fmt.Println(green + bold + "delete image : DELETE")
 	cmdStr := `docker images --format={{.ID}}\t{{.Repository}}\t{{.Tag}}\t{{.Size}}`
 
 	cmdOut, err := exec.Command("cmd", "/c", cmdStr).Output()
