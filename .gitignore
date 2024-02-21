@@ -1,10 +1,4 @@
 *.exe
 .idea
 .vs
-*.make
-**/Makefile
 *.mk
-*Makefile
-**Makefile
-/Makefile
-*/Makefile
