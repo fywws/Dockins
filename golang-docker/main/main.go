@@ -35,6 +35,7 @@ func main() {
 	var initCmd = &cobra.Command{
 		Use:   "init",
 		Short: "Initialize Dockerfile",
+		Long: "Initialize Dockerfile with options",
 		Args: cobra.ExactValidArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			arg := args[0]
