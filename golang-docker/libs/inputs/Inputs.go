@@ -172,7 +172,7 @@ func (m model) View() string {
 }
 
 func InitInputs() {
-	if _, err := tea.NewProgram(initialModel()).Run(); err != nil {
+	if _, err := tea.NewProgram(initialModel(), tea.WithAltScreen()).Run(); err != nil {
 		fmt.Printf("could not start program: %s\n", err)
 		os.Exit(1)
 	}

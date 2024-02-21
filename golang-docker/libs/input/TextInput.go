@@ -19,7 +19,7 @@ var inputt string;
 func InitInput(plc, tl string) string {
 	placehold = plc
 	title = tl
-	p := tea.NewProgram(initialModel())
+	p := tea.NewProgram(initialModel(),  tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
 	}

@@ -119,7 +119,7 @@ func InitList(title string, items []string) string {
 
 	m := model{list: l}
 
-	if _, err := tea.NewProgram(m).Run(); err != nil {
+	if _, err := tea.NewProgram(m,  tea.WithAltScreen()).Run(); err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
