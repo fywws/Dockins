@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 
 
-
+/// Basic CLI struct
 #[derive(Parser)]
 #[command(author, version = None, about = None, long_about = None, disable_help_flag = true)]
 pub struct Cli {
@@ -11,7 +11,7 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Initiates the yml file with frontend (-f), backend (-b) and server (-s) flags
+    /// Initiates the yml file with frontend (-f), backend (-b), database (-db) server (-s) flags
 
     Init{
         ///Represents the frontend configuration.

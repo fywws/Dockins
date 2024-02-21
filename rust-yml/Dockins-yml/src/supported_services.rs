@@ -1,7 +1,9 @@
+use docker_compose_types::Service;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 use crate::frontend::{react::react};
 use crate::backend::{django::django};
+use crate::database::postgresql::postgresql;
 use crate::webserver::{nginx::nginx};
 
 #[derive(Debug, EnumIter)]
@@ -10,7 +12,7 @@ pub enum FrontendServices {
 }
 
 impl FrontendServices {
-    pub fn from_arg(arg: String) -> Option<()> {
+    pub fn from_arg(arg: String) -> Option<(String, Option<Service>)> {
         match arg.as_str() {
             "react" => Some(react()),
             _ => None,
@@ -24,7 +26,7 @@ pub enum BackendServices {
 }
 
 impl BackendServices {
-    pub fn from_arg(arg: String) -> Option<()> {
+    pub fn from_arg(arg: String) -> Option<(String, Option<Service>)> {
         match arg.as_str() {
             "django" => Some(django()),
             _ => None,
@@ -38,9 +40,9 @@ pub enum WebServerServices {
 }
 
 impl WebServerServices {
-    pub fn from_arg(arg: String) -> Option<()> {
+    pub fn from_arg(arg: String, fe: Option<String>, be: Option<String>, db: Option<String>) -> Option<(String, Option<Service>)> {
         match arg.as_str() {
-            "nginx" => Some(nginx()),
+            "nginx" => Some(nginx(fe, be, db)),
             _ => None,
         }
     }
@@ -52,9 +54,9 @@ pub enum DatabaseServices {
 }
 
 impl DatabaseServices {
-    pub fn from_arg(arg: String) -> Option<()> {
+    pub fn from_arg(arg: String, username: Option<String>, password: Option<String>, db_name: Option<String>) -> Option<(String, Option<Service>)> {
         match arg.as_str() {
-            "postgresql" => Some(nginx()),
+            "postgresql" => Some(postgresql(username, password, db_name)),
             _ => None,
         }
     }
