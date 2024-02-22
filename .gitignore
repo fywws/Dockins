@@ -1,6 +1,6 @@
 *.exe
 .idea
 .vs
-./rust-yml/Dockins-yml/target/*
+./dockins_yml/target//*
 *.yml
-rust-yml/Dockins-yml/target/
+dockins_yml/target/
