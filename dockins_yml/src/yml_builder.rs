@@ -3,10 +3,11 @@ use std::io;
 use std::io::Write;
 use serde_yaml;
 use docker_compose_types::{Compose, Services};
+use crate::config::config::Config;
 
-use crate::supported_services::{BackendServices, DatabaseServices, FrontendServices, WebServerServices};
+use crate::supported_services::{BackendServices, DatabaseServices, FrontendServices, ServerServices};
 
-pub fn builder(fe: Option<String>, be: Option<String>, serv: Option<String>, db: Option<String>) {
+pub fn builder(config:&Config, fe: Option<String>, be: Option<String>, serv: Option<String>, db: Option<String>) {
     // fe - Frontend, be - Backend, serv - web server, db - database
     if fe.is_none() && be.is_none() && serv.is_none() && db.is_none() {
         println!("No parameters provided, please use with --help for correct usage");
@@ -30,7 +31,7 @@ pub fn builder(fe: Option<String>, be: Option<String>, serv: Option<String>, db:
 
     if fe.is_some() {
         let arg = fe.clone().unwrap().to_lowercase();
-        match FrontendServices::from_arg(arg) {
+        match FrontendServices::from_arg(arg, config) {
             None => {
                 panic!("The provided frontend argument is not supported or contains errors")
             }
@@ -42,7 +43,7 @@ pub fn builder(fe: Option<String>, be: Option<String>, serv: Option<String>, db:
 
     if be.is_some() {
         let arg = be.clone().unwrap();
-        match BackendServices::from_arg(arg) {
+        match BackendServices::from_arg(arg, config) {
             None => {
                 panic!("The provided backend argument is not supported or contains errors")
             }
@@ -58,7 +59,7 @@ pub fn builder(fe: Option<String>, be: Option<String>, serv: Option<String>, db:
 
         let db_args = db_params();
 
-        match DatabaseServices::from_arg(arg, db_args.0, db_args.1, db_args.2) {
+        match DatabaseServices::from_arg(arg, db_args.0, db_args.1, db_args.2, config) {
             None => {
                 panic!("The provided database argument is not supported or contains errors")
             }
@@ -70,7 +71,7 @@ pub fn builder(fe: Option<String>, be: Option<String>, serv: Option<String>, db:
 
     if serv.is_some() {
         let arg = serv.unwrap();
-        match WebServerServices::from_arg(arg, fe, be, db) {
+        match ServerServices::from_arg(arg, fe, be, db, config) {
             None => {
                 panic!("The provided web server argument is not supported or contains errors")
             }

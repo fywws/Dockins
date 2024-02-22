@@ -16,8 +16,11 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// About this CLI
+    #[command(about="About this CLI")]
     About,
+
+    #[command(alias = "cfg", about="Manage configuration settings")]
+    Config,
 
     #[command(alias = "i", about="Initiates the yml file with frontend (-f), backend (-b), database (-db) server (-s) flags")]
     Init{
@@ -44,9 +47,11 @@ pub enum Commands {
     #[command(alias = "bl", about="Prints all supported backend services. Short form: bl")]
     BackendList,
 
-    #[command(alias = "wsl", about="Prints all supported web server services. Short form: wsl")]
-    WebServerList,
+    #[command(alias = "sl", about="Prints all supported web server services. Short form: sl")]
+    ServerList,
 
     #[command(alias = "dbl", about="Prints all supported databases services. Short form: dbl")]
     DatabasesList,
+
+
 }
