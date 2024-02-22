@@ -4,3 +4,6 @@
 ./dockins_yml/target//*
 *.yml
 dockins_yml/target/
+*.pdb
+*.json
+*.timestamp

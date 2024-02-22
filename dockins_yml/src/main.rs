@@ -36,4 +36,3 @@ fn main() {
     };
     //Add support for users config
 }
-

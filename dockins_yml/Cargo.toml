@@ -12,10 +12,11 @@ authors = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.5.1", features = ["derive"] }
+clap = { version = "4.5.1", features = ["derive", "wrap_help"] }
 crossterm = { version = "0.27.0" }
 docker-compose-types = "0.7.1"
 serde_yaml = "0.9.32"
 strum = { version = "0.26.1", features = ["derive"] }
 strum_macros = "0.26.1"
 indexmap = "2.2.3"
+clap-help = "1.1.1"
