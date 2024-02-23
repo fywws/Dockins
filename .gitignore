@@ -1,6 +1,18 @@
+<<<<<<< HEAD
 *.exe
 .idea
 .vs
 ./dockins_yml/target//*
 *.yml
 dockins_yml/target/
+=======
+*.exe
+.idea
+.vs
+./dockins_yml/target//*
+*.yml
+dockins_yml/target/
+*.pdb
+*.json
+*.timestamp
+>>>>>>> 798341f99ccb90c47aba50fc4f74dbc7918245e8
