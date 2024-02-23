@@ -4,8 +4,8 @@ package main
 import (
 	"fmt"
 	dt "main/docker_templates"
+	libs "main/libs"
 	input "main/libs/input"
-	inputs "main/libs/inputs"
 	list "main/libs/list"
 	table "main/libs/table"
 
@@ -25,8 +25,9 @@ func main() {
 		Short: "Generating Dockerfile",
 		Long: "Generating Dockerfile graphically",
 		Run: func (cmd *cobra.Command, args []string){
+			
 			choice := list.InitList("Pick language", []string{"python","go", "rust", "nodejs"})
-
+			
 			makeScript := list.InitList("Do you want to create a lauch script?", []string{"Yes", "No"})
 			var makeSbool bool;
 			
@@ -86,10 +87,11 @@ func main() {
         Long:  "List Docker inputs",
         Args:  cobra.ExactValidArgs(0),
         Run: func(cmd *cobra.Command, args []string) {
-            inputs.InitInputs()
+			val, _ := libs.GetProperty("port", "dockn.properties")
+			fmt.Println(val)
         },
 	}
-	
+	initCmd.Flags().String("config", "dockn.properties", "No script creating with |init| command")
 	initCmd.Flags().Bool("no-script", true, "No script creating with |init| command")
 	initCmd.Flags().String("port", "3000", "Specify port for Docker to run")
 	initCmd.Flags().String("db", "", "Specify port for Docker to run")
