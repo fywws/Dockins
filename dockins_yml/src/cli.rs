@@ -1,9 +1,14 @@
 use clap::{Parser, Subcommand};
 
 
-/// Basic CLI struct
+const HELP_TEMPLATE:&str = "
+\x1b[35mUsage\x1b[0m: {bin}.exe <\x1b[1mCOMMAND\x1b[0m>\n\n\
+             \x1b[35mCommands\x1b[0m:\n\
+             {subcommands}\n\
+             ";
+
 #[derive(Parser)]
-#[command(author, version = None, about = None, long_about = None, disable_help_flag = true)]
+#[command(author, help_template = HELP_TEMPLATE)]
 pub struct Cli {
     #[command(subcommand)]
     pub cmd: Commands,
@@ -11,8 +16,13 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// Initiates the yml file with frontend (-f), backend (-b), database (-db) server (-s) flags
+    #[command(about="About this CLI")]
+    About,
 
+    #[command(alias = "cfg", about="Manage configuration settings")]
+    Config,
+
+    #[command(alias = "i", about="Initiates the yml file with frontend (-f), backend (-b), database (-db) server (-s) flags")]
     Init{
         ///Represents the frontend configuration.
         #[arg(required = false, long = "frontend", short)]
@@ -31,23 +41,17 @@ pub enum Commands {
         database: Option<String>
     },
 
-    /// Prints all supported frontend services. Short form: fl
-    #[command(alias = "fl")]
+    #[command(alias = "fl", about="Prints all supported frontend services. Short form: fl")]
     FrontendList,
 
-    /// Prints all supported backend services. Short form: bl
-    #[command(alias = "bl")]
+    #[command(alias = "bl", about="Prints all supported backend services. Short form: bl")]
     BackendList,
 
-    /// Prints all supported web server services. Short form: wsl
-    #[command(alias = "wsl")]
-    WebServerList,
+    #[command(alias = "sl", about="Prints all supported web server services. Short form: sl")]
+    ServerList,
 
-    /// Prints all supported databases services. Short form: dbl
-    #[command(alias = "dbl")]
+    #[command(alias = "dbl", about="Prints all supported databases services. Short form: dbl")]
     DatabasesList,
 
-    /// About this CLI
 
-    About,
 }

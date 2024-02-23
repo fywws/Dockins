@@ -3,8 +3,9 @@ use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 use crate::frontend::{react::react, angular::angular};
 use crate::backend::{django::django, spring::spring, nodejs::nodejs};
+use crate::config::config::Config;
 use crate::database::{postgresql::postgresql, mariadb::mariadb};
-use crate::webserver::{nginx::nginx, apache::apache};
+use crate::server::{nginx::nginx, apache::apache};
 
 #[derive(Debug, EnumIter)]
 pub enum FrontendServices {
@@ -13,10 +14,10 @@ pub enum FrontendServices {
 }
 
 impl FrontendServices {
-    pub fn from_arg(arg: String) -> Option<(String, Option<Service>)> {
+    pub fn from_arg(arg: String, config:&Config) -> Option<(String, Option<Service>)> {
         match arg.as_str() {
-            "react" => Some(react()),
-            "angular" => Some(angular()),
+            "react" => Some(react(config)),
+            "angular" => Some(angular(config)),
             _ => None,
         }
     }
@@ -30,7 +31,7 @@ pub enum BackendServices {
 }
 
 impl BackendServices {
-    pub fn from_arg(arg: String) -> Option<(String, Option<Service>)> {
+    pub fn from_arg(arg: String, config:&Config) -> Option<(String, Option<Service>)> {
         match arg.as_str() {
             "django" => Some(django()),
             "spring" => Some(spring()),
@@ -47,7 +48,7 @@ pub enum DatabaseServices {
 }
 
 impl DatabaseServices {
-    pub fn from_arg(arg: String, username: Option<String>, password: Option<String>, db_name: Option<String>) -> Option<(String, Option<Service>)> {
+    pub fn from_arg(arg: String, username: Option<String>, password: Option<String>, db_name: Option<String>, config:&Config) -> Option<(String, Option<Service>)> {
         match arg.as_str() {
             "postgresql" => Some(postgresql(username, password, db_name)),
             "mariadb" => Some(mariadb(username, password, db_name)),
@@ -57,13 +58,13 @@ impl DatabaseServices {
 }
 
 #[derive(Debug, EnumIter)]
-pub enum WebServerServices {
+pub enum ServerServices {
     Nginx,
     Apache
 }
 
-impl WebServerServices {
-    pub fn from_arg(arg: String, fe: Option<String>, be: Option<String>, db: Option<String>) -> Option<(String, Option<Service>)> {
+impl ServerServices {
+    pub fn from_arg(arg: String, fe: Option<String>, be: Option<String>, db: Option<String>, config:&Config) -> Option<(String, Option<Service>)> {
         match arg.as_str() {
             "nginx" => Some(nginx(fe, be, db)),
             "apache" => Some(apache(fe, be, db)),
@@ -95,7 +96,7 @@ pub fn supported_database_services() {
 
 pub fn supported_web_server_services() {
     println!("Supported web server services:");
-    for service in WebServerServices::iter() {
+    for service in ServerServices::iter() {
         println!("{:?}", service)
     }
 }

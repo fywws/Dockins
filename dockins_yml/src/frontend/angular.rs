@@ -1,6 +1,7 @@
 use docker_compose_types::{BuildStep, Ports, Service, Volumes};
+use crate::config::config::Config;
 
-pub fn angular() -> (String, Option<Service>) {
+pub fn angular(config: &Config) -> (String, Option<Service>) {
     // ADD SUPPORT OF CONFIG
     let build_steps = BuildStep::Simple("angular.Dockerfile".to_string());
 
