@@ -1,4 +1,4 @@
 pub mod react;
 pub mod angular;
-mod vue;
+pub mod vue;
 mod help_fns;

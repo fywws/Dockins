@@ -5,7 +5,7 @@ use crate::config::help_fns::{command, dockerfile_name, env, volumes};
 use crate::frontend::help_fns::fe_ports;
 
 pub fn vue(config: &Config)  -> (String, Option<Service>) {
-    let raw_ports = fe_ports(config);
+    let raw_ports = fe_ports(config, "vue");
 
     let df_name = match dockerfile_name(config, FeCfg) {
         None => {

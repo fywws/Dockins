@@ -19,4 +19,3 @@ serde_yaml = "0.9.32"
 strum = { version = "0.26.1", features = ["derive"] }
 strum_macros = "0.26.1"
 indexmap = "2.2.3"
-clap-help = "1.1.1"

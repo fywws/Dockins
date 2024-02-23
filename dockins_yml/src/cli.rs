@@ -19,24 +19,40 @@ pub enum Commands {
     #[command(about="About this CLI")]
     About,
 
-    #[command(alias = "cfg", about="Manage configuration settings")]
-    Config,
+    #[command(alias = "cfg", about="Manage configuration settings. If flags are not specified the builder will include all configuration")]
+    Config {
+        /// Includes the frontend configuration in builder
+        #[arg(required = false, long = "frontend", short)]
+        frontend: bool,
+
+        /// Includes the backend configuration in builder
+        #[arg(required = false, long = "backend", short)]
+        backend: bool,
+
+        /// Includes the webserver configuration in builder
+        #[arg(required = false, long = "server", short)]
+        server: bool,
+
+        /// Includes the database configuration in builder
+        #[arg(required = false, long = "db", short)]
+        database: bool
+    },
 
     #[command(alias = "i", about="Initiates the yml file with frontend (-f), backend (-b), database (-db) server (-s) flags")]
     Init{
-        ///Represents the frontend configuration.
+        /// Allows to pick the frontend technology.
         #[arg(required = false, long = "frontend", short)]
         frontend: Option<String>,
 
-        /// Represents the backend configuration.
+        /// Allows to pick the backend technology.
         #[arg(required = false, long = "backend", short)]
         backend: Option<String>,
 
-        /// Represents the host configuration.
+        /// Allows to pick the webserver technology.
         #[arg(required = false, long = "server", short)]
         server: Option<String>,
 
-        /// Represents the database configuration.
+        /// Allows to pick the database technology.
         #[arg(required = false, long = "db", short)]
         database: Option<String>
     },

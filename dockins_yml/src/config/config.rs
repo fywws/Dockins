@@ -31,8 +31,8 @@ impl Config {
         config
     }
 
-    pub fn save(self) -> Config {
-        self
+    pub fn save(self){
+
     }
 
     pub fn load() -> Config {

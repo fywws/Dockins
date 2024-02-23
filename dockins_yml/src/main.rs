@@ -7,6 +7,7 @@ mod database;
 mod yml_builder;
 mod config;
 mod config_builder;
+mod config_subbuilders;
 
 
 use clap::{Parser};
@@ -22,11 +23,11 @@ use crate::yml_builder::builder;
 
 fn main() {
     let cli = Cli::parse();
-    
+
     let mut config = Config::load();
-    
+
     match cli.cmd {
-        Commands::Config => {
+        Commands::Config { frontend, backend, server, database } => {
 
         }
 

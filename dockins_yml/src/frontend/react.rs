@@ -2,12 +2,12 @@ use std::vec;
 use docker_compose_types::{BuildStep, Command, Environment, Ports, Service};
 use crate::config::config::Config;
 use crate::config::config::ConfigParts::FeCfg;
-use crate::config::help_fns::{command, dockerfile_name, env, ports, volumes};
+use crate::config::help_fns::{command, dockerfile_name, env, volumes};
 use crate::frontend::help_fns::fe_ports;
 
 pub fn react(config: &Config) -> (String, Option<Service>) {
 
-    let raw_ports = fe_ports(config);
+    let port = fe_ports(config, "react");
 
     let df_name = match dockerfile_name(config, FeCfg) {
         None => {
@@ -38,7 +38,7 @@ pub fn react(config: &Config) -> (String, Option<Service>) {
         }
     };
 
-    let ports = Ports::Short(vec![raw_ports]);
+    let ports = Ports::Short(vec![port]);
     let build_step = BuildStep::Simple(df_name);
     let environment = env.unwrap();
     let command = Some(Command::Simple(raw_command.unwrap()));

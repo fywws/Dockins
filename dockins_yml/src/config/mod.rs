@@ -1,6 +1,6 @@
 pub mod config;
-mod frontend_cfg;
-mod backend_cfg;
-mod db_cfg;
-mod server_cfg;
+pub mod frontend_cfg;
+pub mod backend_cfg;
+pub mod db_cfg;
+pub mod server_cfg;
 pub mod help_fns;

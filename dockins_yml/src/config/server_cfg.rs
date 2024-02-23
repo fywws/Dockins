@@ -1,6 +1,6 @@
 #[derive(Default)]
 pub struct ServerConfig {
-    pub path_to_dockerfile: Option<String>,
+    //pub path_to_dockerfile: Option<String>,
     pub dockerfile_name: Option<String>,
     pub ports: Option<String>,
     pub command: Option<String>,

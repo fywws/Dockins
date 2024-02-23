@@ -1,7 +1,7 @@
 use docker_compose_types::Service;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use crate::frontend::{react::react, angular::angular};
+use crate::frontend::{react::react, angular::angular, vue::vue};
 use crate::backend::{django::django, spring::spring, nodejs::nodejs};
 use crate::config::config::Config;
 use crate::database::{postgresql::postgresql, mariadb::mariadb};
@@ -10,7 +10,8 @@ use crate::server::{nginx::nginx, apache::apache};
 #[derive(Debug, EnumIter)]
 pub enum FrontendServices {
     React,
-    Angular
+    Angular,
+    Vue
 }
 
 impl FrontendServices {
@@ -18,6 +19,7 @@ impl FrontendServices {
         match arg.as_str() {
             "react" => Some(react(config)),
             "angular" => Some(angular(config)),
+            "vue" => Some(vue(config)),
             _ => None,
         }
     }
