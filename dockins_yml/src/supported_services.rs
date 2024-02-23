@@ -33,9 +33,9 @@ pub enum BackendServices {
 impl BackendServices {
     pub fn from_arg(arg: String, config:&Config) -> Option<(String, Option<Service>)> {
         match arg.as_str() {
-            "django" => Some(django()),
-            "spring" => Some(spring()),
-            "nodejs" => Some(nodejs()),
+            "django" => Some(django(config)),
+            "spring" => Some(spring(config)),
+            "nodejs" => Some(nodejs(config)),
             _ => None,
         }
     }

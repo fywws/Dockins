@@ -6,9 +6,9 @@ mod server;
 mod database;
 mod yml_builder;
 mod config;
+mod config_builder;
 
 
-use std::fs::File;
 use clap::{Parser};
 use crate::cli::{Cli, Commands};
 use crate::config::config::Config;
@@ -23,14 +23,7 @@ use crate::yml_builder::builder;
 fn main() {
     let cli = Cli::parse();
     
-    let config = match File::open("./dockins_yml.toml") {
-        Ok(cfg_file) => {
-            Config::load(cfg_file)
-        }
-        Err(_) => {
-            Config::new(None, None, None, None)
-        }
-    };
+    let mut config = Config::load();
     
     match cli.cmd {
         Commands::Config => {
@@ -38,7 +31,7 @@ fn main() {
         }
 
         Commands::Init { frontend, backend, server, database } => {
-            builder(&config, frontend, backend, server, database)
+            builder(&mut config, frontend, backend, server, database)
         }
 
         Commands::FrontendList => { supported_frontend_services() }

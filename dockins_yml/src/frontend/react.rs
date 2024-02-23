@@ -1,32 +1,15 @@
 use std::vec;
-use docker_compose_types::{BuildStep, Command, Environment, Ports, Service, Volumes};
+use docker_compose_types::{BuildStep, Command, Environment, Ports, Service};
 use crate::config::config::Config;
+use crate::config::config::ConfigParts::FeCfg;
 use crate::config::help_fns::{command, dockerfile_name, env, ports, volumes};
+use crate::frontend::help_fns::fe_ports;
 
 pub fn react(config: &Config) -> (String, Option<Service>) {
-    let raw_ports = match ports(config) {
-        None => {
-            if config.be_cfg.is_none() {
-              "3000:3000".to_string()
-            } else {
-                if config.be_cfg.unwrap().framework == "nodejs" {
-                    if config.be_cfg.unwrap().ports == Some("3000:3000".to_string()) {
-                        println!("Please consider that react has 3001 ports and not 3000");
-                        "3001:3001".to_string()
-                    } else {
-                        "3000:3000".to_string()
-                    }
-                } else {
-                    "3000:3000".to_string()
-                }
-            }
-        }
-        Some(port) => {
-            port
-        }
-    };
 
-    let df_name = match dockerfile_name(config) {
+    let raw_ports = fe_ports(config);
+
+    let df_name = match dockerfile_name(config, FeCfg) {
         None => {
             "react.Dockerfile".to_string()
         }
@@ -35,27 +18,9 @@ pub fn react(config: &Config) -> (String, Option<Service>) {
         }
     };
 
-    let volumes = match volumes(config) {
-        None => {
-            vec![Volumes::Simple("./client:/app".to_string())]
-        }
-        Some(raw_volumes) => {
+    let volumes = volumes(config, FeCfg).unwrap();
 
-            let mut volumes = Vec::with_capacity(8);
-
-            for raw_volume in raw_volumes.iter() {
-                let copy_volume = raw_volume.clone();
-
-                volumes.push(
-                    Volumes::Simple(copy_volume)
-                );
-            }
-
-            volumes
-        }
-    };
-
-    let env = match env(config) {
+    let env = match env(config, FeCfg) {
         Some(env) => {
             Some(Environment::List(env))
         }
@@ -64,7 +29,7 @@ pub fn react(config: &Config) -> (String, Option<Service>) {
         }
     };
 
-    let raw_command = match command(config) {
+    let raw_command = match command(config, FeCfg) {
         None => {
             None
         }

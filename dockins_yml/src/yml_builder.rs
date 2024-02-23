@@ -7,7 +7,7 @@ use crate::config::config::Config;
 
 use crate::supported_services::{BackendServices, DatabaseServices, FrontendServices, ServerServices};
 
-pub fn builder(config:&Config, fe: Option<String>, be: Option<String>, serv: Option<String>, db: Option<String>) {
+pub fn builder(config:&mut Config, fe: Option<String>, be: Option<String>, serv: Option<String>, db: Option<String>) {
     // fe - Frontend, be - Backend, serv - web server, db - database
     if fe.is_none() && be.is_none() && serv.is_none() && db.is_none() {
         println!("No parameters provided, please use with --help for correct usage");
@@ -28,6 +28,20 @@ pub fn builder(config:&Config, fe: Option<String>, be: Option<String>, serv: Opt
         }
     };
 
+    if be.is_some() {
+        let arg = be.clone().unwrap();
+        if arg == "nodejs" {
+            config.be_cfg.is_nodejs = true;
+        }
+        match BackendServices::from_arg(arg, config) {
+            None => {
+                panic!("The provided backend argument is not supported or contains errors")
+            }
+            Some( backend_context ) => {
+                services.insert(backend_context.0, backend_context.1)
+            }
+        };
+    };
 
     if fe.is_some() {
         let arg = fe.clone().unwrap().to_lowercase();
@@ -41,17 +55,6 @@ pub fn builder(config:&Config, fe: Option<String>, be: Option<String>, serv: Opt
         };
     };
 
-    if be.is_some() {
-        let arg = be.clone().unwrap();
-        match BackendServices::from_arg(arg, config) {
-            None => {
-                panic!("The provided backend argument is not supported or contains errors")
-            }
-            Some( backend_context ) => {
-                services.insert(backend_context.0, backend_context.1)
-            }
-        };
-    };
 
 
     if db.is_some() {
