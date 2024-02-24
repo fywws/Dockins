@@ -28,13 +28,6 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			config, _ := cmd.Flags().GetString("config")
 
-			fmt.Println(config)
-			ab, _ := libs.GetProperty("language", config)
-
-			a := strings.Trim(ab, " <nil>")
-
-			fmt.Println(a)
-
 			var choice string
 			var makeS bool = false
 			var portN int = 8080
@@ -66,20 +59,20 @@ func main() {
 				}
 			} else {
 				c, _ := libs.GetProperty("language", config)
-				choice = strings.Trim(c, " <nil>")
+				choice = strings.Trim(c, " ")
 
 				mks, _ := libs.GetProperty("make-script", config)
-				makeString := strings.Trim(mks, " <nil>")
+				makeString := strings.Trim(mks, " ")
 				if makeString == "true" {
 					makeS = true
 				}
 
 				p, _ := libs.GetProperty("port", config)
-				portNum := strings.Trim(p, " <nil>")
+				portNum := strings.Trim(p, " ")
 				portN, _ = strconv.Atoi(portNum)
 
 				d, _ := libs.GetProperty("db", config)
-				db = strings.Trim(d, " <nil>")
+				db = strings.Trim(d, " ")
 			}
 
 			switch choice {

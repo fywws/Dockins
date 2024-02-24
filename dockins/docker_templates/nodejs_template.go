@@ -126,7 +126,7 @@ exec gosu postgres "$@"`
 		fmt.Println(red + bold + " × No node-js files are found in the directory" + reset)
 	}
 
-	if !makeS && fileFounded {
-		CreateSh("nodejs-template", portString)
+	if makeS && fileFounded {
+		CREATE_SH("nodejs-template", portString)
 	}
 }

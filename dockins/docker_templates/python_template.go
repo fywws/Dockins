@@ -130,8 +130,8 @@ exec gosu postgres "$@"`
 			writeFile("Dockerfile", py_standard)
 		}
 
-		if !makeS {
-			CreateSh("py-template", portString)
+		if makeS {
+			CREATE_SH("py-template", portString)
 		}
 	} else {
 		fmt.Println(red + bold + " × ERROR : main.py file not found" + reset)

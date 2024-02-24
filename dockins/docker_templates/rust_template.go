@@ -14,7 +14,7 @@ func RUST_Write(makeS bool, port int, db string) {
 
 	portString := strconv.Itoa(port)
 	var founded bool = false
-	toml, _ := findTomlName()
+	toml := findTomlName()
 	if toml != "" {
 		founded = true
 	}
@@ -101,8 +101,8 @@ exec gosu postgres "$@"`
 		writePretty()
 
 		writeFile("Dockerfile", rust_standard)
-		if !makeS {
-			CreateSh("rust-template", portString)
+		if makeS {
+			CREATE_SH("rust-template", portString)
 		}
 	}
 }

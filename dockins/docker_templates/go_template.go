@@ -128,8 +128,8 @@ exec gosu postgres "$@"`
 
 			writeFile("Dockerfile", go_standard)
 		}
-		if !makeS {
-			CreateSh("go-template", portString)
+		if makeS {
+			CREATE_SH("go-template", portString)
 		}
 	} else {
 		fmt.Println(red + bold + " × ERROR : main.go file not found" + reset)
