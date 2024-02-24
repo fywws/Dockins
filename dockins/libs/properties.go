@@ -2,7 +2,7 @@ package libs
 
 import (
 	"bufio"
-	"errors"
+	"fmt"
 	"os"
 	"strings"
 )
@@ -24,8 +24,8 @@ func GetProperty(key string, filename string) (string, error) {
 
 	err = scanner.Err()
 	if err != nil {
-		return "", errors.New("property not found")
+		return "", err
 	}
 
-	return "", nil
+	return "", fmt.Errorf("property '%s' not found", key)
 }

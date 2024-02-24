@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 
 	"main/docker_templates"
+	"main/libs"
+	"main/libs/input"
 	"main/libs/list"
 	"main/libs/table"
 
@@ -23,31 +26,71 @@ func main() {
 		Short: "Generating Dockerfile",
 		Long:  "Generating Dockerfile graphically",
 		Run: func(cmd *cobra.Command, args []string) {
-			choice := list.InitList("Pick language", []string{"python", "go", "rust", "nodejs"})
+			config, _ := cmd.Flags().GetString("config")
 
-			makeScript, _ := cmd.Flags().GetBool("no-script")
-			input, _ := cmd.Flags().GetString("port")
-			db, _ := cmd.Flags().GetString("db")
+			fmt.Println(config)
+			ab, _ := libs.GetProperty("language", config)
 
-			if db == "none" {
-				db = ""
-			}
+			a := strings.Trim(ab, " <nil>")
 
-			port, err := strconv.Atoi(input)
-			if err != nil {
-				fmt.Println("\x1b[31m" + "\x1b[1m" + "× ERROR: incorrect port provided" + colorReset)
-				os.Exit(1)
+			fmt.Println(a)
+
+			var choice string
+			var makeS bool = false
+			var portN int = 8080
+			var db string = "none"
+
+			if config == "" {
+
+				choice = list.InitList("Pick language", []string{"python", "go", "rust", "nodejs"})
+
+				// INITIALIZING A MAKESCRIPT LSIT
+				makeScript := list.InitList("Create a launch script?", []string{"yes", "no"})
+				if makeScript == "yes" {
+					makeS = true
+				}
+
+				// INITIALIZING A PORT INPUT
+				input := input.InitInput("PORT", "Provide a port for the container")
+				port, err := strconv.Atoi(input)
+				if err != nil {
+					fmt.Println("\x1b[31m" + "\x1b[1m" + "× ERROR: incorrect port provided" + colorReset)
+					os.Exit(1)
+				}
+				portN = port
+
+				// INITIALIZING A DB INPUT
+				db = list.InitList("Choose a database", []string{"none", "mysql", "postgres", "mongodb"})
+				if db == "none" {
+					db = ""
+				}
+			} else {
+				c, _ := libs.GetProperty("language", config)
+				choice = strings.Trim(c, " <nil>")
+
+				mks, _ := libs.GetProperty("make-script", config)
+				makeString := strings.Trim(mks, " <nil>")
+				if makeString == "true" {
+					makeS = true
+				}
+
+				p, _ := libs.GetProperty("port", config)
+				portNum := strings.Trim(p, " <nil>")
+				portN, _ = strconv.Atoi(portNum)
+
+				d, _ := libs.GetProperty("db", config)
+				db = strings.Trim(d, " <nil>")
 			}
 
 			switch choice {
 			case "python":
-				docker_templates.PY_Write(makeScript, port, db)
+				docker_templates.PY_Write(makeS, portN, db)
 			case "go":
-				docker_templates.GO_Write(makeScript, port, db)
+				docker_templates.GO_Write(makeS, portN, db)
 			case "rust":
-				docker_templates.RUST_Write(makeScript, port, db)
+				docker_templates.RUST_Write(makeS, portN, db)
 			case "nodejs":
-				docker_templates.NODEJS_Write(makeScript, port, db)
+				docker_templates.NODEJS_Write(makeS, portN, db)
 			default:
 				fmt.Println("\x1b[31m" + "\x1b[1m" + " × ERROR : Invalid language choice" + colorReset)
 				os.Exit(1)
@@ -66,9 +109,7 @@ func main() {
 	}
 
 	// Flags for init command
-	initCmd.Flags().Bool("no-script", false, "No script creating with |init| command")
-	initCmd.Flags().String("port", "3000", "Specify port for Docker to run")
-	initCmd.Flags().String("db", "", "Specify database for Docker to run")
+	initCmd.PersistentFlags().String("config", "", "Path to config file")
 
 	rootCmd.AddCommand(initCmd, imagesCmd)
 
