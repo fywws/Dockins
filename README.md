@@ -32,7 +32,7 @@ You may also use .config files such as .toml, .properties :
 dockn init --config dockn.toml
 ```
 > [!NOTE]
-> Name of config file may be diffrent
+> Name of config file may be different
 
 
 
