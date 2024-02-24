@@ -9,17 +9,16 @@ import (
 
 func PY_Write(makeS bool, port int, db string) {
 
-	var username string;
-	var password string;
-	var database string;
-
+	var username string
+	var password string
+	var database string
 
 	portString := strconv.Itoa(port)
 
 	var filename string = searchFile("main.py")
-	varName, _ := GetAppNameFromFile(filename); 
+	varName, _ := GetAppNameFromFile(filename)
 	content, _ := ioutil.ReadFile(filename)
-	var isFastApi bool = findAppWithFastAPI(string(content));
+	var isFastApi bool = findAppWithFastAPI(string(content))
 
 	var py_standard string = `FROM python
 
@@ -29,9 +28,9 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-EXPOSE `+portString+`:`+portString+`
+EXPOSE ` + portString + `:` + portString + `
 
-CMD ["python", "`+filename+`"]`
+CMD ["python", "` + filename + `"]`
 
 	var py_uvicorn string = `FROM python
 	
@@ -42,9 +41,9 @@ WORKDIR /app
 RUN pip install -r requirements.txt
 RUN pip install uvicorn
 
-EXPOSE `+portString+`:`+portString+`
+EXPOSE ` + portString + `:` + portString + `
 
-CMD ["uvicorn", "`+filename+":"+varName+`", "--port", "`+portString+`"]`
+CMD ["uvicorn", "` + filename + ":" + varName + `", "--port", "` + portString + `"]`
 
 	if db != "" && db == "postgres" {
 
@@ -53,14 +52,14 @@ CMD ["uvicorn", "`+filename+":"+varName+`", "--port", "`+portString+`"]`
 		fmt.Scan(&username)
 
 		fmt.Println(bold + "Username Password? " + reset)
-		fmt.Print(bold +"» " + reset)
+		fmt.Print(bold + "» " + reset)
 		fmt.Scan(&password)
 
 		fmt.Println(bold + "PostgreSQL Database name? " + reset)
-		fmt.Print(bold +"» " + reset)
+		fmt.Print(bold + "» " + reset)
 		fmt.Scan(&database)
 
-		fmt.Println("\n"+  green + bold + "Change PostgreSQL config in config/ ..." + reset + "\n")
+		fmt.Println("\n" + green + bold + "Change PostgreSQL config in config/ ..." + reset + "\n")
 
 	}
 
@@ -68,9 +67,9 @@ CMD ["uvicorn", "`+filename+":"+varName+`", "--port", "`+portString+`"]`
 
 ARG PGDATA=/var/lib/postgresql/data
 
-ENV POSTGRES_USER="`+username+`"
-ENV POSTGRES_PASSWORD="`+ password + `"
-ENV POSTGRES_DB="`+database+`"
+ENV POSTGRES_USER="` + username + `"
+ENV POSTGRES_PASSWORD="` + password + `"
+ENV POSTGRES_DB="` + database + `"
 
 RUN mkdir -p ${PGDATA} && chown postgres:postgres ${PGDATA}
 
@@ -100,7 +99,7 @@ echo "ALTER USER $POSTGRES_USER WITH SUPERUSER;" | psql -U "$POSTGRES_USER"
 # Run the PostgreSQL service
 exec gosu postgres "$@"`
 
-	if (filename != "") {
+	if filename != "" {
 
 		if db != "" {
 			if db == "postgres" && username != "" && password != "" && database != "" {
@@ -109,33 +108,32 @@ exec gosu postgres "$@"`
 				writeFile("config/postgresql.conf", postgres_config)
 				writeFile("entrypoint.sh", postgres_entrypoint)
 			} else {
-				fmt.Println( red + bold + " × ERROR : provided wrong" + reset)
+				fmt.Println(red + bold + " × ERROR : provided wrong" + reset)
 				os.Remove("postgres.Dockerfile")
 			}
 		}
 
-		if (isFastApi) {
-			fmt.Println(bold +"Initializing Python FastApi docker..."+ reset)
-		
+		if isFastApi {
+			fmt.Println(bold + "Initializing Python FastApi docker..." + reset)
+
 			os.Create("Dockerfile")
 			writePretty()
-		
+
 			writeFile("Dockerfile", py_uvicorn)
 		} else {
 
-			fmt.Println(bold +"Initializing Python docker..."+ reset)
-			
+			fmt.Println(bold + "Initializing Python docker..." + reset)
+
 			os.Create("Dockerfile")
 			writePretty()
-			
+
 			writeFile("Dockerfile", py_standard)
 		}
 
-
-		if !makeS {
+		if makeS {
 			CREATE_SH("py-template", portString)
 		}
 	} else {
-		fmt.Println( red+ bold + " × ERROR : main.py file not found" + reset)
+		fmt.Println(red + bold + " × ERROR : main.py file not found" + reset)
 	}
 }

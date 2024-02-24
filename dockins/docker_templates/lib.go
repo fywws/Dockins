@@ -9,19 +9,16 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"time"
-	"unicode"
 
 	"github.com/BurntSushi/toml"
 )
-
 
 func writeFile(file, data string) {
 	os.WriteFile(file, []byte(data), 0644)
 }
 
 func deleteFile(file string) {
-    os.Remove(file)
+	os.Remove(file)
 }
 
 func CREATE_SH(name string, port string) {
@@ -41,31 +38,31 @@ Write-Host "Building Docker image '$ImageName'..."
 docker build -f "$DockerfilePath/Dockerfile" -t "$ImageName" .
 
 Write-Host "Starting Docker container '$ImageName'..."
-docker run --name appContainer -p `+string(port)+`:`+string(port)+` -it $ImageName`
+docker run --name appContainer -p ` + string(port) + `:` + string(port) + ` -it $ImageName`
 
 	writeFile(name+".ps1", rust_bat_string)
 
 }
 
 func findTomlName() string {
-    file, err := os.Open("Cargo.toml")
-    if err != nil {
-        fmt.Println( red + bold + " × File not found : Cargo.toml" + reset)
-    }
-    defer file.Close()
+	file, err := os.Open("Cargo.toml")
+	if err != nil {
+		fmt.Println(red + bold + " × File not found : Cargo.toml" + reset)
+	}
+	defer file.Close()
 
-    var data map[string]interface{}
-    
-    if _, err := toml.DecodeReader(file, &data); err != nil {
-        log.Fatal(err)
-    }
+	var data map[string]interface{}
 
-    name, ok := data["package"].(map[string]interface{})["name"].(string)
-    if !ok {
-        log.Fatal("name field not found or not a string")
-    }
+	if _, err := toml.DecodeReader(file, &data); err != nil {
+		log.Fatal(err)
+	}
 
-    return name
+	name, ok := data["package"].(map[string]interface{})["name"].(string)
+	if !ok {
+		log.Fatal("name field not found or not a string")
+	}
+
+	return name
 }
 
 func fileExist(fileName string) bool {
@@ -77,50 +74,40 @@ func fileExist(fileName string) bool {
 }
 
 func searchFile(targetFile string) string {
-    var resultPath string
+	var resultPath string
 
-    err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
-        if err != nil {
-            return err
-        }
-        if !info.IsDir() && info.Name() == targetFile {
-            resultPath, _ = filepath.Rel(".", path)
-            resultPath = filepath.ToSlash(resultPath) // Преобразование пути
-            return fmt.Errorf("file found")
-        }
-        return nil
-    })
+	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() && info.Name() == targetFile {
+			resultPath, _ = filepath.Rel(".", path)
+			resultPath = filepath.ToSlash(resultPath) // Преобразование пути
+			return fmt.Errorf("file found")
+		}
+		return nil
+	})
 
-    if err != nil && err.Error() != "file found" {
-        return ""
-    }
+	if err != nil && err.Error() != "file found" {
+		return ""
+	}
 
-    return resultPath
+	return resultPath
 }
 
-
-
-const reset = "\033[0m"
-const red = "\x1b[31m"
-const green = "\x1b[32m"
-const bold = "\x1b[1m"
-const blue = "\x1b[96m"
+const (
+	reset = "\033[0m"
+	red   = "\x1b[31m"
+	green = "\x1b[32m"
+	bold  = "\x1b[1m"
+	blue  = "\x1b[96m"
+)
 
 func writePretty() {
-	// fmt.Print(bold + "[" + reset)
-	// repeatWithDelay(bold + blue + "■"+reset, 2600, 29)
-	// fmt.Println(bold+"]"+ reset)
 
-    lib.ProgressAnimated()
+	lib.ProgressAnimated()
 
-    fmt.Println("\n", green + bold + "Happy hacking" + reset)
-}
-
-func repeatWithDelay(character string, delay time.Duration, times int) {
-	for i := 0; i < times; i++ {
-		fmt.Print(character)
-		time.Sleep(delay)
-	}
+	fmt.Println("\n", green+bold+"Happy hacking"+reset)
 }
 
 func StringInFile(filename string, searchStr string) bool {
@@ -145,42 +132,27 @@ func findAppWithFastAPI(code string) bool {
 	return false
 }
 
-func extractVariableNameFromLine(line string) string {
-	parts := strings.SplitN(line, "=", 2)
-	if len(parts) != 2 {
-		return ""
-	}
-
-	assignmentParts := strings.FieldsFunc(parts[0], func(r rune) bool { return !unicode.IsLetter(r) })
-	if len(assignmentParts) <= 1 || assignmentParts[len(assignmentParts)-1] != "FastAPI()" {
-		return ""
-	}
-
-	return assignmentParts[0]
-}
-
-
 func GetAppName(code string) (name string, ok bool) {
-    lines := strings.Split(code, "\n")
-    
-    for _, line := range lines {
-        
-        trimmedLine := strings.TrimSpace(line)
-            if strings.Contains(trimmedLine, "= FastAPI()") {
-                nameParts := strings.SplitN(trimmedLine, "=", 2)
-                return strings.TrimSpace(nameParts[0]), true
-            }
-    }
-    return "", false
+	lines := strings.Split(code, "\n")
+
+	for _, line := range lines {
+
+		trimmedLine := strings.TrimSpace(line)
+		if strings.Contains(trimmedLine, "= FastAPI()") {
+			nameParts := strings.SplitN(trimmedLine, "=", 2)
+			return strings.TrimSpace(nameParts[0]), true
+		}
+	}
+	return "", false
 }
 
 func GetAppNameFromFile(filename string) (name string, ok bool) {
-    contentBytes, err := os.ReadFile(filename)
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    contentString := string(contentBytes)
-    
-    return GetAppName(contentString)
+	contentBytes, err := os.ReadFile(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	contentString := string(contentBytes)
+
+	return GetAppName(contentString)
 }
