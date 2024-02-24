@@ -1,15 +1,19 @@
+use std::error::Error;
 use std::fs::File;
-use crate::config::backend_cfg::BeConfig;
-use crate::config::db_cfg::DbConfig;
-use crate::config::frontend_cfg::FeConfig;
+use std::io::{Read, Write};
+use serde::{Deserialize, Serialize};
+use crate::config::backend_cfg::BackEndConfig;
+use crate::config::db_cfg::DataBaseConfig;
+use crate::config::frontend_cfg::FrontEndConfig;
 use crate::config::server_cfg::ServerConfig;
 
 
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Config {
-    pub fe_cfg: FeConfig,
-    pub be_cfg: BeConfig,
-    pub db_cfg: DbConfig,
-    pub server_cfg: ServerConfig,
+    pub FrontEndConfiguration: FrontEndConfig,
+    pub BackEndConfiguration: BackEndConfig,
+    pub DataBaseConfiguration: DataBaseConfig,
+    pub ServerConfiguration: ServerConfig,
 }
 
 pub enum ConfigParts {
@@ -20,37 +24,65 @@ pub enum ConfigParts {
 }
 
 impl Config {
-    pub fn new(fe_cfg: FeConfig, be_cfg: BeConfig, db_cfg: DbConfig, server_cfg: ServerConfig) -> Config {
+    pub fn new(fe_cfg: FrontEndConfig, be_cfg: BackEndConfig, db_cfg: DataBaseConfig, server_cfg: ServerConfig) -> Config {
         let config = Self {
-            fe_cfg,
-            be_cfg,
-            db_cfg,
-            server_cfg,
+            FrontEndConfiguration: fe_cfg,
+            BackEndConfiguration: be_cfg,
+            DataBaseConfiguration: db_cfg,
+            ServerConfiguration: server_cfg,
         };
 
         config
     }
 
     pub fn save(self){
+        let toml = toml::to_string_pretty(&self).unwrap();
 
+        match File::create("yml_cfg.toml") {
+            Ok(mut file) => {
+                file.write_all(toml.as_bytes()).expect("Please run as an administrator. If it wont work please contact the developers")
+            }
+            Err(_) => {
+                panic!("Please delete the yml-cfg.toml file. If it doesnt exist please run command as an administrator")
+            }
+        }
+
+        println!("Successfully saved config")
     }
 
     pub fn load() -> Config {
         match File::open("./yml_cfg.toml") {
-            Ok(file) => {
-                Self {
-                    fe_cfg: FeConfig::no_cfg(),
-                    be_cfg: BeConfig::no_cfg(),
-                    db_cfg: DbConfig::no_cfg(),
-                    server_cfg: ServerConfig::no_cfg(),
-                }
+            Ok(mut file) => {
+                let mut buffer = [0; 1024];
+
+                match file.read(&mut buffer) {
+                    Ok(_) => {}
+                    Err(_) => {
+                        panic!("Unable to read config file. File might be damaged. Please re-create the file")
+                    }
+                };
+
+                let cfg_string = String::from_utf8(Vec::from(buffer)).unwrap();
+
+                println!("{}", cfg_string);
+
+                let toml_string = toml::from_str(cfg_string.as_str());
+
+                let config: Config = match toml_string {
+                    Ok(cfg) => {
+                        cfg
+                    },
+                    Err(err) => panic!("Unable to parse config. Please re-create the config file or fix the errors manually. {}", err)
+                };
+
+                config
             }
             Err(_) => {
                 Self {
-                    fe_cfg: FeConfig::no_cfg(),
-                    be_cfg: BeConfig::no_cfg(),
-                    db_cfg: DbConfig::no_cfg(),
-                    server_cfg: ServerConfig::no_cfg(),
+                    FrontEndConfiguration: FrontEndConfig::no_cfg(),
+                    BackEndConfiguration: BackEndConfig::no_cfg(),
+                    DataBaseConfiguration: DataBaseConfig::no_cfg(),
+                    ServerConfiguration: ServerConfig::no_cfg(),
                 }
             }
         }

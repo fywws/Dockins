@@ -13,6 +13,7 @@ mod config_subbuilders;
 use clap::{Parser};
 use crate::cli::{Cli, Commands};
 use crate::config::config::Config;
+use crate::config_builder::cfg_builder;
 use crate::supported_services::{
     supported_backend_services,
     supported_database_services,
@@ -24,11 +25,13 @@ use crate::yml_builder::builder;
 fn main() {
     let cli = Cli::parse();
 
-    let mut config = Config::load();
+    let mut config = Config::new();
+
+    println!("{:?}", config);
 
     match cli.cmd {
         Commands::Config { frontend, backend, server, database } => {
-
+            cfg_builder(frontend, backend, server, database)
         }
 
         Commands::Init { frontend, backend, server, database } => {
@@ -42,6 +45,8 @@ fn main() {
 
         Commands::About {} => {}
     };
+
+
 }
 
 

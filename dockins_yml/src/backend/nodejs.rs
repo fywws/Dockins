@@ -1,4 +1,4 @@
-use docker_compose_types::{BuildStep, Command, Environment, Ports, Service, Volumes};
+use docker_compose_types::{BuildStep, Command, Environment, Ports, Service};
 use crate::config::config::Config;
 use crate::config::config::ConfigParts::FeCfg;
 use crate::config::help_fns::{command, dockerfile_name, env, ports, volumes};

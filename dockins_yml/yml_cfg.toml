@@ -1,0 +1,13 @@
+[FrontEndConfiguration]
+
+[BackEndConfiguration]
+
+[DataBaseConfiguration]
+
+[ServerConfiguration]
+dockerfile_name = "server"
+ports = "1488"
+command = ""
+env = [""]
+volumes = [""]
+

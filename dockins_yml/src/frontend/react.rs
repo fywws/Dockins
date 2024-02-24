@@ -14,7 +14,11 @@ pub fn react(config: &Config) -> (String, Option<Service>) {
             "react.Dockerfile".to_string()
         }
         Some(df_name) => {
-            df_name
+            if df_name.ends_with(".Dockerfile") {
+                df_name
+            } else {
+                format!("{}.Dockerfile", df_name)
+            }
         }
     };
 

@@ -31,7 +31,7 @@ pub fn builder(config:&mut Config, fe: Option<String>, be: Option<String>, serv:
     if be.is_some() {
         let arg = be.clone().unwrap();
         if arg == "nodejs" {
-            config.be_cfg.is_nodejs = true;
+            config.BackEndConfiguration.is_nodejs = true;
         }
         match BackendServices::from_arg(arg, config) {
             None => {

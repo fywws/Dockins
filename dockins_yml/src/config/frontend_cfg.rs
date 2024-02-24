@@ -1,14 +1,16 @@
-#[derive(Default)]
-pub struct FeConfig {
-    //pub path_to_dockerfile: Option<String>,
+use serde::{Deserialize, Serialize};
+
+#[derive(Default, Serialize, Deserialize)]
+#[derive(Debug)]
+pub struct FrontEndConfig {
     pub dockerfile_name: Option<String>,
     pub ports: Option<String>,
     pub command: Option<String>,
     pub env: Option<Vec<String>>,
-    pub path_to_project: Option<Vec<String>>,
+    pub volumes: Option<Vec<String>>,
 }
 
-impl FeConfig {
+impl FrontEndConfig {
     pub fn no_cfg() -> Self {
         Self {
             ..Default::default()
