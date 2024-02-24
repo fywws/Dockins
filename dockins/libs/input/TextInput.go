@@ -12,14 +12,14 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-var placehold string;
-var title string;
-var inputt string;
+var placehold string
+var title string
+var inputt string
 
 func InitInput(plc, tl string) string {
 	placehold = plc
 	title = tl
-	p := tea.NewProgram(initialModel(),  tea.WithAltScreen())
+	p := tea.NewProgram(initialModel(), tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		log.Fatal(err)
 	}
@@ -76,7 +76,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	return fmt.Sprintf(
-		title + "\n\n%s\n\n%s",
+		title+"\n\n%s\n\n%s",
 		m.textInput.View(),
 		"(esc to quit)",
 	) + "\n"

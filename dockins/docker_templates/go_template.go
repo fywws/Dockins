@@ -9,31 +9,28 @@ import (
 
 func GO_Write(makeS bool, port int, db string) {
 
-	var username string;
-	var password string;
-	var database string;
-
+	var username string
+	var password string
+	var database string
 
 	portString := strconv.Itoa(port)
-
 
 	file := searchFile("main.go")
 
 	// gorm := StringInFile("gorm.io/gorm") // TODO: add support for gorm
 
-	var go_standard string =  `FROM golang:latest
+	var go_standard string = `FROM golang:latest
 
 WORKDIR /app
 
 COPY . .
 
 RUN go mod download
-RUN go build -o main `+file+`
+RUN go build -o main ` + file + `
 
-EXPOSE `+portString+`:`+portString+`
+EXPOSE ` + portString + `:` + portString + `
 
-CMD ["`+strings.ReplaceAll(file, "main.go", "main")+`"]`
-
+CMD ["` + strings.ReplaceAll(file, "main.go", "main") + `"]`
 
 	var go_postgres string = `FROM golang:latest
 
@@ -49,35 +46,34 @@ RUN go build -o /go/bin/app
 
 COPY --from=0 /go/bin/app /app
 
-EXPOSE `+portString+`:`+portString+`
+EXPOSE ` + portString + `:` + portString + `
 
 CMD ["./app"]`
 
+	if db != "" && db == "postgres" {
+		fmt.Println(bold + "PostgreSQL Username? " + reset)
+		fmt.Print(bold + "» " + reset)
+		fmt.Scan(&username)
 
-if db != "" && db == "postgres" {
-	fmt.Println(bold + "PostgreSQL Username? " + reset)
-	fmt.Print(bold + "» " + reset)
-	fmt.Scan(&username)
+		fmt.Println(bold + "Username Password? " + reset)
+		fmt.Print(bold + "» " + reset)
+		fmt.Scan(&password)
 
-	fmt.Println(bold + "Username Password? " + reset)
-	fmt.Print(bold +"» " + reset)
-	fmt.Scan(&password)
+		fmt.Println(bold + "PostgreSQL Database name? " + reset)
+		fmt.Print(bold + "» " + reset)
+		fmt.Scan(&database)
 
-	fmt.Println(bold + "PostgreSQL Database name? " + reset)
-	fmt.Print(bold +"» " + reset)
-	fmt.Scan(&database)
+		fmt.Println("\n" + green + bold + "Change PostgreSQL config in config/ ..." + reset + "\n")
 
-	fmt.Println("\n"+  green + bold + "Change PostgreSQL config in config/ ..." + reset + "\n")
+	}
 
-}
-
-var postgres_contrainer string = `FROM postgres:latest
+	var postgres_contrainer string = `FROM postgres:latest
 
 ARG PGDATA=/var/lib/postgresql/data
 
-ENV POSTGRES_USER="`+username+`"
-ENV POSTGRES_PASSWORD="`+ password + `"
-ENV POSTGRES_DB="`+database+`"
+ENV POSTGRES_USER="` + username + `"
+ENV POSTGRES_PASSWORD="` + password + `"
+ENV POSTGRES_DB="` + database + `"
 
 RUN mkdir -p ${PGDATA} && chown postgres:postgres ${PGDATA}
 
@@ -87,13 +83,13 @@ RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 EXPOSE 5432`
 
-postgres_config := `#-----------------------------
+	postgres_config := `#-----------------------------
 # Data Directory Settings
 #-----------------------------
 
 data_directory = '/var/lib/postgresql/data'`
 
-postgres_entrypoint := `#!/bin/bash
+	postgres_entrypoint := `#!/bin/bash
 set -e
 
 # Wait for PostgreSQL service to become available
@@ -107,15 +103,14 @@ echo "ALTER USER $POSTGRES_USER WITH SUPERUSER;" | psql -U "$POSTGRES_USER"
 # Run the PostgreSQL service
 exec gosu postgres "$@"`
 
-	
-	if (file != ""){
+	if file != "" {
 
 		if db != "" {
 			if db == "postgres" && username != "" && password != "" && database != "" {
-				fmt.Println(bold + "Initializing Go docker..." + reset )
+				fmt.Println(bold + "Initializing Go docker..." + reset)
 				os.Create("Dockerfile")
 				writePretty()
-		
+
 				writeFile("Dockerfile", go_postgres)
 
 				writeFile("postgres.Dockerfile", postgres_contrainer)
@@ -123,21 +118,21 @@ exec gosu postgres "$@"`
 				writeFile("config/postgresql.conf", postgres_config)
 				writeFile("entrypoint.sh", postgres_entrypoint)
 			} else {
-				fmt.Println( red + bold + " × ERROR : provided wrong" + reset)
+				fmt.Println(red + bold + " × ERROR : provided wrong" + reset)
 				os.Remove("postgres.Dockerfile")
 			}
 		} else {
-			fmt.Println(bold + "Initializing Go docker..." + reset )
+			fmt.Println(bold + "Initializing Go docker..." + reset)
 			os.Create("Dockerfile")
 			writePretty()
-			
+
 			writeFile("Dockerfile", go_standard)
 		}
 		if !makeS {
-			CREATE_SH("go-template", portString)
+			CreateSh("go-template", portString)
 		}
 	} else {
-		fmt.Println( red+ bold + " × ERROR : main.go file not found" + reset)
+		fmt.Println(red + bold + " × ERROR : main.go file not found" + reset)
 	}
 
 }

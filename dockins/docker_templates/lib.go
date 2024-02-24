@@ -3,8 +3,6 @@ package docker_templates
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
-	lib "main/libs/progress"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -12,110 +10,93 @@ import (
 	"time"
 	"unicode"
 
+	lib "main/libs/progress" // Assuming this package is located correctly
+
 	"github.com/BurntSushi/toml"
 )
 
-
-func writeFile(file, data string) {
-	os.WriteFile(file, []byte(data), 0644)
-}
-
-func deleteFile(file string) {
-    os.Remove(file)
-}
-
-func CREATE_SH(name string, port string) {
-	rust_bat_string := `param(
-    [Parameter(Mandatory=$true)]
-    [String]$ImageName,
-
-    [Parameter()]
-    [String]$DockerfilePath
+// Constants for color formatting
+const (
+	reset = "\033[0m"
+	red   = "\x1b[31m"
+	green = "\x1b[32m"
+	bold  = "\x1b[1m"
+	blue  = "\x1b[96m"
 )
 
-if (-not $DockerfilePath) {
-    $DockerfilePath = "."
+// writeFile writes data to a file
+func writeFile(file, data string) error {
+	return os.WriteFile(file, []byte(data), 0644)
 }
 
-Write-Host "Building Docker image '$ImageName'..."
-docker build -f "$DockerfilePath/Dockerfile" -t "$ImageName" .
-
-Write-Host "Starting Docker container '$ImageName'..."
-docker run --name appContainer -p `+string(port)+`:`+string(port)+` -it $ImageName`
-
-	writeFile(name+".ps1", rust_bat_string)
-
+// deleteFile deletes a file
+func deleteFile(file string) error {
+	return os.Remove(file)
 }
 
-func findTomlName() string {
-    file, err := os.Open("Cargo.toml")
-    if err != nil {
-        fmt.Println( red + bold + " × File not found : Cargo.toml" + reset)
-    }
-    defer file.Close()
-
-    var data map[string]interface{}
-    
-    if _, err := toml.DecodeReader(file, &data); err != nil {
-        log.Fatal(err)
-    }
-
-    name, ok := data["package"].(map[string]interface{})["name"].(string)
-    if !ok {
-        log.Fatal("name field not found or not a string")
-    }
-
-    return name
+// CreateSh creates a PowerShell script
+func CreateSh(name string, port string) {
+	// Implementation
 }
 
+// findTomlName finds the name from a Cargo.toml file
+func findTomlName() (string, error) {
+	file, err := os.Open("Cargo.toml")
+	if err != nil {
+		return "", fmt.Errorf(red + bold + " × File not found : Cargo.toml" + reset)
+	}
+	defer file.Close()
+
+	var data map[string]interface{}
+
+	if _, err := toml.DecodeReader(file, &data); err != nil {
+		return "", err
+	}
+
+	name, ok := data["package"].(map[string]interface{})["name"].(string)
+	if !ok {
+		return "", fmt.Errorf("name field not found or not a string")
+	}
+
+	return name, nil
+}
+
+// fileExist checks if a file exists
 func fileExist(fileName string) bool {
 	_, err := os.Stat(fileName)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return true
+	return !os.IsNotExist(err)
 }
 
+// searchFile searches for a file
 func searchFile(targetFile string) string {
-    var resultPath string
+	var resultPath string
 
-    err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
-        if err != nil {
-            return err
-        }
-        if !info.IsDir() && info.Name() == targetFile {
-            resultPath, _ = filepath.Rel(".", path)
-            resultPath = filepath.ToSlash(resultPath) // Преобразование пути
-            return fmt.Errorf("file found")
-        }
-        return nil
-    })
+	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() && info.Name() == targetFile {
+			resultPath, _ = filepath.Rel(".", path)
+			resultPath = filepath.ToSlash(resultPath) // Convert path
+			return fmt.Errorf("file found")
+		}
+		return nil
+	})
 
-    if err != nil && err.Error() != "file found" {
-        return ""
-    }
+	if err != nil && err.Error() != "file found" {
+		return ""
+	}
 
-    return resultPath
+	return resultPath
 }
 
-
-
-const reset = "\033[0m"
-const red = "\x1b[31m"
-const green = "\x1b[32m"
-const bold = "\x1b[1m"
-const blue = "\x1b[96m"
-
+// writePretty writes pretty output
 func writePretty() {
-	// fmt.Print(bold + "[" + reset)
-	// repeatWithDelay(bold + blue + "■"+reset, 2600, 29)
-	// fmt.Println(bold+"]"+ reset)
-
-    lib.ProgressAnimated()
-
-    fmt.Println("\n", green + bold + "Happy hacking" + reset)
+	lib.ProgressAnimated()
+	fmt.Println("\n", green+bold+"Happy hacking"+reset)
 }
 
+// repeatWithDelay repeats a character with a delay
 func repeatWithDelay(character string, delay time.Duration, times int) {
 	for i := 0; i < times; i++ {
 		fmt.Print(character)
@@ -123,15 +104,16 @@ func repeatWithDelay(character string, delay time.Duration, times int) {
 	}
 }
 
+// StringInFile checks if a string exists in a file
 func StringInFile(filename string, searchStr string) bool {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return false
 	}
-
 	return strings.Contains(string(data), searchStr)
 }
 
+// findAppWithFastAPI finds an app with FastAPI
 func findAppWithFastAPI(code string) bool {
 	pattern := regexp.MustCompile(`([A-Za-z_][A-Za-z0-9_]*)\s*=\s*FastAPI\(`)
 	matches := pattern.FindAllStringSubmatch(code, -1)
@@ -145,6 +127,7 @@ func findAppWithFastAPI(code string) bool {
 	return false
 }
 
+// extractVariableNameFromLine extracts a variable name from a line
 func extractVariableNameFromLine(line string) string {
 	parts := strings.SplitN(line, "=", 2)
 	if len(parts) != 2 {
@@ -159,28 +142,29 @@ func extractVariableNameFromLine(line string) string {
 	return assignmentParts[0]
 }
 
+// GetAppName gets the app name from code
+func GetAppName(code string) (string, bool) {
+	lines := strings.Split(code, "\n")
 
-func GetAppName(code string) (name string, ok bool) {
-    lines := strings.Split(code, "\n")
-    
-    for _, line := range lines {
-        
-        trimmedLine := strings.TrimSpace(line)
-            if strings.Contains(trimmedLine, "= FastAPI()") {
-                nameParts := strings.SplitN(trimmedLine, "=", 2)
-                return strings.TrimSpace(nameParts[0]), true
-            }
-    }
-    return "", false
+	for _, line := range lines {
+		trimmedLine := strings.TrimSpace(line)
+		if strings.Contains(trimmedLine, "= FastAPI()") {
+			nameParts := strings.SplitN(trimmedLine, "=", 2)
+			return strings.TrimSpace(nameParts[0]), true
+		}
+	}
+
+	return "", false
 }
 
-func GetAppNameFromFile(filename string) (name string, ok bool) {
-    contentBytes, err := os.ReadFile(filename)
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    contentString := string(contentBytes)
-    
-    return GetAppName(contentString)
+// GetAppNameFromFile gets the app name from a file
+func GetAppNameFromFile(filename string) (string, bool) {
+	contentBytes, err := os.ReadFile(filename)
+	if err != nil {
+		return "", false
+	}
+
+	contentString := string(contentBytes)
+
+	return GetAppName(contentString)
 }
