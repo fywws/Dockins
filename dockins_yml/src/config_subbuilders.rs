@@ -30,7 +30,7 @@ pub fn backend_cfg_builder(be_config: &mut BackEndConfig) {
         command: command().ok(),
         volumes: path_to_project().ok(),
         env: env().ok(),
-        is_nodejs: false
+        is_nodejs: Some(false)
     })));
 }
 

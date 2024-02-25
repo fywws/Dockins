@@ -9,7 +9,7 @@ pub struct BackEndConfig {
     pub env: Option<Vec<String>>,
     pub volumes: Option<Vec<String>>,
     #[serde(skip_serializing)]
-    pub is_nodejs: bool
+    pub is_nodejs: Option<bool>
 }
 
 impl BackEndConfig {

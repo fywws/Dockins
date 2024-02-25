@@ -25,9 +25,7 @@ use crate::yml_builder::builder;
 fn main() {
     let cli = Cli::parse();
 
-    let mut config = Config::new();
-
-    println!("{:?}", config);
+    let mut config = Config::load();
 
     match cli.cmd {
         Commands::Config { frontend, backend, server, database } => {

@@ -53,23 +53,19 @@ impl Config {
     pub fn load() -> Config {
         match File::open("./yml_cfg.toml") {
             Ok(mut file) => {
-                let mut buffer = [0; 1024];
+                let mut cfg_string = String::new();
 
-                match file.read(&mut buffer) {
+                match file.read_to_string(&mut cfg_string) {
                     Ok(_) => {}
                     Err(_) => {
                         panic!("Unable to read config file. File might be damaged. Please re-create the file")
                     }
                 };
 
-                let cfg_string = String::from_utf8(Vec::from(buffer)).unwrap();
+                let toml_string = toml::from_str::<Config>(cfg_string.as_str());
 
-                println!("{}", cfg_string);
-
-                let toml_string = toml::from_str(cfg_string.as_str());
-
-                let config: Config = match toml_string {
-                    Ok(cfg) => {
+                let mut config: Config = match toml_string {
+                    Ok(mut cfg) => {
                         cfg
                     },
                     Err(err) => panic!("Unable to parse config. Please re-create the config file or fix the errors manually. {}", err)
