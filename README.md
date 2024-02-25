@@ -18,9 +18,9 @@ Dockins is a versatile utility designed to automate the generation of Dockerfile
 
 ### Getting Started
 
-To get started with DOCKINS, install it from github page;
+To get started with DOCKINS, install it from GitHub page;
 
-Once Dockins is insatlled, you can graphically initialize a new project by running the following command :
+Once Dockins is installed, you can graphically initialize a new project by running the following command :
 
 ```
 dockn init
@@ -44,6 +44,52 @@ make-script=true // false
 port=8080
 db= // dont write it or leave blank, if you dont have DataBase
 ```
+
+# Dockins-YML
+
+### A util for auto-generation of docker compose file
+
+Dockins yml is user-friendly CLI that allows you to have flexible configuration.
+
+To create you compose file use
+
+```
+dockny init 
+```
+
+To create your config you should use 
+
+```
+dockny config
+```
+
+To see supported frontend technologies you should use 
+
+```
+dockny fl
+``` 
+
+To see supported backend technologies you should use
+
+```
+dockny bl
+```
+
+To see supported server (host) technologies you should use
+
+```
+dockny sl
+```
+
+And finally to see supported database technologies you should use
+
+```
+dockny dbl
+```
+
+> [!WARNING]
+> Keep in mind that everything is still under development and will be improved
+
 
 You may also make an env variable via terminal in :
 
