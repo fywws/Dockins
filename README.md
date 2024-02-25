@@ -45,6 +45,19 @@ port=8080
 db= // dont write it or leave blank, if you dont have DataBase
 ```
 
+You may also make an env variable via terminal in :
+
+Linux
+```
+export PATH=$PATH:dockn || dockny
+```
+
+Windows
+```
+set PATH=%PATH%;dockn.exe || dockny.exe
+```
+
+
 ### Contributing
 
 DOCKINS is an open source project and contributions are welcome. We will be glad to receive any help, because our skills are very poor.
