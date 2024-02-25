@@ -1,24 +1,30 @@
 use docker_compose_types::{BuildStep, Command, Environment, Ports, Service};
 use crate::config::config::Config;
-use crate::config::config::ConfigParts::FeCfg;
-use crate::config::help_fns::{command, dockerfile_name, env, volumes};
-use crate::frontend::help_fns::fe_ports;
+use crate::config::config::ConfigParts::BeCfg;
+use crate::config::help_fns::{command, dockerfile_name, env, ports, volumes};
 
-pub fn vue(config: &Config)  -> (String, Option<Service>) {
-    let raw_ports = fe_ports(config, "vue");
-
-    let df_name = match dockerfile_name(config, FeCfg) {
+pub fn actix_web(config: &Config) -> (String, Option<Service>) {
+    let df_name = match dockerfile_name(config, BeCfg) {
         None => {
-            "react.Dockerfile".to_string()
+            "actix_web.Dockerfile".to_string()
         }
         Some(df_name) => {
             df_name
         }
     };
 
-    let volumes = volumes(config, FeCfg).unwrap();
+    let raw_ports = match ports(config, BeCfg) {
+        None => {
+            "8080:8080".to_string()
+        }
+        Some(ports) => {
+            ports
+        }
+    };
 
-    let env = match env(config, FeCfg) {
+    let volumes = volumes(config, BeCfg).unwrap();
+
+    let env = match env(config, BeCfg) {
         Some(env) => {
             Environment::List(env)
         }
@@ -27,7 +33,7 @@ pub fn vue(config: &Config)  -> (String, Option<Service>) {
         }
     };
 
-    let raw_command = match command(config, FeCfg) {
+    let raw_command = match command(config, BeCfg) {
         None => {
             None
         }
@@ -46,14 +52,14 @@ pub fn vue(config: &Config)  -> (String, Option<Service>) {
         _ => None
     };
 
-    let service = Service {
-        ports,
+    let service = Some(Service {
         build_: Some(build_step),
-        environment,
+        ports,
         volumes,
+        environment,
         command,
         ..Default::default()
-    };
+    });
 
-    ("vue-frontend".to_string(), Some(service))
+    ("actix_web-backend".to_string(), service)
 }

@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Serialize, Deserialize)]
-#[derive(Debug)]
 pub struct BackEndConfig {
     pub dockerfile_name: Option<String>,
     pub ports: Option<String>,

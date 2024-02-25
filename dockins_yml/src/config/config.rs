@@ -8,7 +8,7 @@ use crate::config::frontend_cfg::FrontEndConfig;
 use crate::config::server_cfg::ServerConfig;
 
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize)]
 pub struct Config {
     pub FrontEndConfiguration: FrontEndConfig,
     pub BackEndConfiguration: BackEndConfig,

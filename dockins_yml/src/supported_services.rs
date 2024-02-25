@@ -3,6 +3,7 @@ use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 use crate::frontend::{react::react, angular::angular, vue::vue};
 use crate::backend::{django::django, spring::spring, nodejs::nodejs};
+use crate::backend::actix_web::actix_web;
 use crate::config::config::Config;
 use crate::database::{postgresql::postgresql, mariadb::mariadb};
 use crate::server::{nginx::nginx, apache::apache};
@@ -29,7 +30,8 @@ impl FrontendServices {
 pub enum BackendServices {
     Django,
     Spring,
-    Nodejs
+    Nodejs,
+    ActixWeb
 }
 
 impl BackendServices {
@@ -38,6 +40,7 @@ impl BackendServices {
             "django" => Some(django(config)),
             "spring" => Some(spring(config)),
             "nodejs" => Some(nodejs(config)),
+            "actixweb" => Some(actix_web(config)),
             _ => None,
         }
     }
@@ -50,10 +53,10 @@ pub enum DatabaseServices {
 }
 
 impl DatabaseServices {
-    pub fn from_arg(arg: String, username: Option<String>, password: Option<String>, db_name: Option<String>, config:&Config) -> Option<(String, Option<Service>)> {
+    pub fn from_arg(arg: String,  config:&Config) -> Option<(String, Option<Service>)> {
         match arg.as_str() {
-            "postgresql" => Some(postgresql(username, password, db_name)),
-            "mariadb" => Some(mariadb(username, password, db_name)),
+            "postgresql" => Some(postgresql(config)),
+            "mariadb" => Some(mariadb(config)),
             _ => None,
         }
     }

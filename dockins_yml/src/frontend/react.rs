@@ -26,10 +26,10 @@ pub fn react(config: &Config) -> (String, Option<Service>) {
 
     let env = match env(config, FeCfg) {
         Some(env) => {
-            Some(Environment::List(env))
+            Environment::List(env)
         }
         None => {
-            None
+            Environment::default()
         }
     };
 
@@ -44,9 +44,13 @@ pub fn react(config: &Config) -> (String, Option<Service>) {
 
     let ports = Ports::Short(vec![port]);
     let build_step = BuildStep::Simple(df_name);
-    let environment = env.unwrap();
-    let command = Some(Command::Simple(raw_command.unwrap()));
-
+    let environment = env;
+    let command = match raw_command {
+        Some(command) => {
+            Some(Command::Simple(command))
+        }
+        _ => None
+    };
     let service = Service {
         ports,
         build_: Some(build_step),

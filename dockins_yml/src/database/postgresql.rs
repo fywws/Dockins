@@ -1,22 +1,64 @@
-use docker_compose_types::{BuildStep, Service, Volumes};
+use docker_compose_types::{BuildStep, Command, Environment, Ports, Service, Volumes};
+use crate::config::config::Config;
+use crate::config::config::ConfigParts::DBCfg;
+use crate::config::help_fns::{command, dockerfile_name, env, ports};
 use crate::database::help_fns::db_info;
 
-pub fn postgresql(user_name: Option<String>, password: Option<String>, db_name: Option<String>) -> (String, Option<Service>) {
-    // ADD SUPPORT OF CONFIG
-    let build_steps = BuildStep::Simple("posgresql.Dockerfile".to_string());
+pub fn postgresql(config: &Config) -> (String, Option<Service>) {
+    let df_name = match dockerfile_name(config, DBCfg) {
+        None => {
+            "postgresql.Dockerfile".to_string()
+        }
+        Some(df_name) => {
+            df_name
+        }
+    };
 
-    let volume = Volumes::Simple("postgres_data:/var/lib/postgresql/data:/app".to_string());
+    let raw_ports = match ports(config, DBCfg) {
+        None => {
+            "5432:5432".to_string()
+        }
+        Some(ports) => {
+            ports
+        }
+    };
 
-    let volumes = vec![volume];
+    let env = match env(config, DBCfg) {
+        Some(env) => {
+            Environment::List(env)
+        }
+        None => {
+            Environment::default()
+        }
+    };
 
-    let environment = db_info(user_name, password, db_name);
+    let raw_command = match command(config, DBCfg) {
+        None => {
+            None
+        }
+        Some(command) => {
+            Some(command)
+        }
+    };
 
-    let service = Some(Service {
-        build_: Some(build_steps),
-        environment,
-        volumes,
+    let ports = Ports::Short(vec![raw_ports]);
+    let build_step = BuildStep::Simple(df_name);
+
+
+    let command = match raw_command {
+        Some(command) => {
+            Some(Command::Simple(command))
+        }
+        _ => None
+    };
+
+    let service = Service {
+        build_: Some(build_step),
+        ports,
+        environment: env,
+        command,
         ..Default::default()
-    });
+    };
 
-    ("postgres-db".to_string(), service)
+    ("postgresql-db".to_string(), Some(service))
 }

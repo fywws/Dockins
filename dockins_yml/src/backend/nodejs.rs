@@ -6,7 +6,7 @@ use crate::config::help_fns::{command, dockerfile_name, env, ports, volumes};
 pub fn nodejs(config:&Config) -> (String, Option<Service>) {
     let df_name = match dockerfile_name(config, FeCfg) {
         None => {
-            "django.Dockerfile".to_string()
+            "nodejs.Dockerfile".to_string()
         }
         Some(df_name) => {
             df_name
@@ -26,10 +26,10 @@ pub fn nodejs(config:&Config) -> (String, Option<Service>) {
 
     let env = match env(config, FeCfg) {
         Some(env) => {
-            Some(Environment::List(env))
+            Environment::List(env)
         }
         None => {
-            None
+            Environment::default()
         }
     };
 
@@ -44,9 +44,13 @@ pub fn nodejs(config:&Config) -> (String, Option<Service>) {
 
     let ports = Ports::Short(vec![raw_ports]);
     let build_step = BuildStep::Simple(df_name);
-    let environment = env.unwrap();
-    let command = Some(Command::Simple(raw_command.unwrap()));
-
+    let environment = env;
+    let command = match raw_command {
+        Some(command) => {
+            Some(Command::Simple(command))
+        }
+        _ => None
+    };
     let service = Some(Service {
         build_: Some(build_step),
         ports,
