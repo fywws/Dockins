@@ -41,7 +41,6 @@ fn main() {
         Commands::ServerList => { supported_web_server_services() }
         Commands::DatabasesList => { supported_database_services() }
 
-        Commands::About {} => {}
     };
 
 

@@ -16,9 +16,6 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    #[command(about="About this CLI")]
-    About,
-
     #[command(alias = "cfg", about="Manage configuration settings. If flags are not specified the builder will include all configuration")]
     Config {
         /// Includes the frontend configuration in builder
